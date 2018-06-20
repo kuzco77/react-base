@@ -3,12 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter as Router} from "react-router-dom"
 
-// import Navigation from "./Navigation"
-
-// const App = () =>
-// <Router>
-//   <Navigation/>
-// </Router>
 
 class App extends Component {
   render() {
