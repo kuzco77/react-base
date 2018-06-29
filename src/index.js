@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
+import Home from "./components/Home"
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
+import {BrowserRouter, Route} from "react-router-dom"
 
 // Initialize Firebase
 var config = {
@@ -17,5 +19,12 @@ var config = {
   firebase.initializeApp(config);
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <BrowserRouter>
+    <div>
+    <Route path="/app" component={App}/>
+    <Route path="/home" coponent={Home}/>
+    </div>
+  </BrowserRouter>,
+ document.getElementById('root'));
 registerServiceWorker();
