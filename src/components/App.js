@@ -4,11 +4,17 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import * as firebase from "firebase"
 import { stat } from 'fs';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+// import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
+import "/home/thinhtn/react-base/node_modules/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
+import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem } from "react-bootstrap"
+import cellEditFactory from 'react-bootstrap-table2-editor';
 
-
+const selectRow = {
+  mode: 'checkbox',
+  clickToSelect: true
+};
 
 class App extends Component {
 
@@ -20,6 +26,7 @@ class App extends Component {
       realtimeSpeed: 10,
       teacherAchievement: "",
       teacherID: "",
+      teacherName: "",
       oldTeacherID: "",
       newTeacherID: "",
     }
@@ -27,19 +34,22 @@ class App extends Component {
     this.state.products = [];
     this.state.columns = [{
       dataField: "idTeacher",
-      text: "Teacher ID"
+      text: "Mã Giáo Viên"
     }, {
       dataField: "name",
-      text: "Ten giao vien"
+      text: "Tên Giáo Viên"
+    }, {
+      dataField: "achievement",
+      text: "Thành Tựu"
     }];
 
-    this.state.key = ["1","2"]
-    
+    this.state.key = ["1", "2"]
+
   }
 
 
-  
-  
+
+
 
   componentDidMount() {
 
@@ -63,12 +73,6 @@ class App extends Component {
     // this.props.history.push("home")
   }
 
-  handleSpeedTF(event) {
-    const boundObject = this
-    boundObject.setState({ speed: event.target.value })
-
-  }
-
   onImageChange(event) {
     if (event.target.files && event.target.files[0]) {
       let reader = new FileReader();
@@ -79,9 +83,7 @@ class App extends Component {
     }
   }
 
-  handleAchiveTF(event) {
 
-  }
 
   handleIDTF(event) {
     const searchTeacherID = event.target.value
@@ -89,31 +91,8 @@ class App extends Component {
     if (searchTeacherID !== undefined) {
 
       this.setState({ teacherID: searchTeacherID })
-      const teacherRef = firebase.database().ref().child("ListTeacher").child(searchTeacherID || "hello")
-      teacherRef.on("value", snap => {
-        console.log(snap)
-        this.setState({
-          teacherAchievement: snap.child("achievement").val(),
-          teacherLink: snap.child("linkAvatar").val(),
-          teacherName: snap.child("name").val(),
-          teacherSchool: snap.child("school").val(),
-        })
-      })
-    }
-  }
-
-  handleLinkTF(event) {
-
-  }
-
-  handleNameTF(event) {
-    const searchTeacherName = event.target.value
-
-    if (searchTeacherName !== undefined) {
-
-      this.setState({ teacherName: searchTeacherName })
-      const teacherNameRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherName).endAt(searchTeacherName+"\uf8ff")
-      teacherNameRef.on("value", snaps => {
+      const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherID).endAt(searchTeacherID + "\uf8ff")
+      teacherIDRef.on("value", snaps => {
         const newProducts = []
         snaps.forEach(snap => {
           newProducts.push(snap.val())
@@ -121,55 +100,69 @@ class App extends Component {
 
         console.log(snaps.val())
         this.setState({ products: newProducts })
-        
-        
       })
     }
   }
 
-  handleSchoolTF(event) {
+
+  handleSearchBtn(event) {
 
   }
 
-  handleSearchButton(event) {
 
-  }
-
-  changeIDTeacher(from, to) {
-    const teacherRef = firebase.database().ref().child("ListTeacher").orderByChild("name")
-  }
 
   render() {
     return (
       <form className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React with speed: {this.state.realtimeSpeed}</h1>
+          <h1 className="App-title">Trang quản lý EDUMET</h1>
 
         </header>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
           <Link to={"home"}>link to home</Link>
         </p>
-        <input placeholder="Enter something here" onChange={this.handleSpeedTF.bind(this)} />
-        <button onClick={this.handleChangeValueBtn.bind(this)}>Change value</button>
+        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF.bind(this)} />
+        <Button bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
         <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
         <img id="target" src={this.state.image} />
-        <h3>Achievement</h3>  <input value={this.state.teacherAchievement || ""} placeholder="Enter something here" width="100" height="100" />
-        <h3>ID</h3>  <input value={this.state.teacherID || ""} placeholder="Enter something here" onChange={this.handleIDTF.bind(this)} /> <button>Search</button>
-        <h3>Link</h3>  <input value={this.state.teacherLink || ""} placeholder="Enter something here" /> <img src={this.state.teacherLink}/>
-        <h3>Name</h3>  <input value={this.state.teacherName || ""} placeholder="Enter something here" onChange={this.handleNameTF.bind(this)} />
-        <h3>School</h3>  <input value={this.state.teacherSchool || ""} placeholder="Enter something here" />
-        <h2>Change teacher ID</h2>   <input value={this.state.teacherSchool || ""} placeholder="Enter something here" />
-        <div>
-          <p>From</p> <input value={this.state.oldTeacherID || ""} placeholder="Old Teacher ID"/>
-          <p>To</p> <input value={this.state.newTeacherID || ""} placeholder="New Teacher ID"/>
-          <button> Change </button>
 
-          
-        </div>
 
-        <BootstrapTable keyField="idTeacher" data={ this.state.products } columns={ this.state.columns } />
+
+        <BootstrapTable
+          keyField="idTeacher"
+          data={this.state.products}
+          columns={this.state.columns}
+          striped
+          hover
+          condensed
+          cellEdit={cellEditFactory({
+            mode: 'dbclick',
+            afterSaveCell: (oldValue, newValue, row, column) => {
+              console.log('After Saving Cell!!');
+              console.log(newValue)
+              // console.log(row)
+              // console.log(column)
+
+              // const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").equalTo(newValue["idTeacher"])
+              // teacherIDRef.on("value", snaps => {
+              //   // const newProducts = []
+              //   // snaps.forEach(snap => {
+              //   //   newProducts.push(snap.val())
+              //   // })
+
+              //   // console.log(snaps.val())
+              //   // this.setState({ products: newProducts })
+
+              //   console.log(snaps.val())
+              // })
+
+
+            }
+          })}
+
+        />
 
       </form>
     );
