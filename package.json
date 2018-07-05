@@ -6,7 +6,9 @@
   "dependencies": {
     "ajv": "^6.5.1",
     "firebase": "^5.0.4",
+    "history": "^4.7.2",
     "react": "^16.4.1",
+    "react-bootstrap-table-next": "^0.1.14",
     "react-dom": "^16.4.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
