@@ -7,7 +7,7 @@ import { stat } from 'fs';
 // import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
-import "/home/thinhtn/react-base/node_modules/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem } from "react-bootstrap"
 import cellEditFactory from 'react-bootstrap-table2-editor';
 
@@ -18,6 +18,11 @@ const selectRow = {
 
 class App extends Component {
 
+  imageFormatter(cell, row) {
+    console.log(cell);
+    console.log(row);
+    return "<img src='" + cell + "'/>";
+  }
 
   constructor() {
     super()
@@ -26,24 +31,26 @@ class App extends Component {
       realtimeSpeed: 10,
       teacherAchievement: "",
       teacherID: "",
-      teacherName: "",
-      oldTeacherID: "",
-      newTeacherID: "",
     }
 
     this.state.products = [];
     this.state.columns = [{
       dataField: "idTeacher",
-      text: "Mã Giáo Viên"
+      text: "Mã Giáo Viên",
+      dataSort: true
     }, {
       dataField: "name",
       text: "Tên Giáo Viên"
     }, {
       dataField: "achievement",
       text: "Thành Tựu"
+    }, {
+      dataField: "linkAvatar",
+      text: "Avatar",
+      dataFormat: this.imageFormatter
     }];
 
-    this.state.key = ["1", "2"]
+
 
   }
 
@@ -53,19 +60,18 @@ class App extends Component {
 
   componentDidMount() {
 
-    const rootRef = firebase.database().ref().child("ListTeacher").child("DA").child("achievement")
-    const speedRef = rootRef
-    speedRef.on("value", snap => {
-      this.setState({
-        realtimeSpeed: snap.val(),
+    const teacherIDRef = firebase.database().ref().child("ListTeacher")
+    teacherIDRef.on("value", snaps => {
+      const newProducts = []
+      snaps.forEach(snap => {
+        newProducts.push(snap.val())
       })
+
+      // console.log(snaps.val())
+      this.setState({ products: newProducts })
     })
 
-
   }
-
-
-
   handleChangeValueBtn() {
     const rootRef = firebase.database().ref().child("react")
     const speedRef = rootRef.child("speed")
@@ -98,7 +104,7 @@ class App extends Component {
           newProducts.push(snap.val())
         })
 
-        console.log(snaps.val())
+        // console.log(snaps.val())
         this.setState({ products: newProducts })
       })
     }
@@ -109,7 +115,12 @@ class App extends Component {
 
   }
 
+  afterSaveCell(oldValue, newValue, row, column) {
+    console.log(row)
 
+    const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
+    teacherIDRef.set(row)
+  }
 
   render() {
     return (
@@ -123,8 +134,14 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
           <Link to={"home"}>link to home</Link>
         </p>
-        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF.bind(this)} />
-        <Button bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
+
+        <input
+          placeholder="Nhập ID giảng viên"
+          value={this.state.teacherID || ""}
+          onChange={this.handleIDTF.bind(this)}
+        />
+
+        {/* <Button bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button> */}
         <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
         <img id="target" src={this.state.image} />
 
@@ -139,27 +156,7 @@ class App extends Component {
           condensed
           cellEdit={cellEditFactory({
             mode: 'dbclick',
-            afterSaveCell: (oldValue, newValue, row, column) => {
-              console.log('After Saving Cell!!');
-              console.log(newValue)
-              // console.log(row)
-              // console.log(column)
-
-              // const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").equalTo(newValue["idTeacher"])
-              // teacherIDRef.on("value", snaps => {
-              //   // const newProducts = []
-              //   // snaps.forEach(snap => {
-              //   //   newProducts.push(snap.val())
-              //   // })
-
-              //   // console.log(snaps.val())
-              //   // this.setState({ products: newProducts })
-
-              //   console.log(snaps.val())
-              // })
-
-
-            }
+            afterSaveCell: this.afterSaveCell
           })}
 
         />

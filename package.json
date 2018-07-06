@@ -4,9 +4,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "ajv": "^6.5.1",
+    "ajv": "^6.5.2",
+    "ajv-keywords": "^3.2.0",
     "firebase": "^5.0.4",
     "history": "^4.7.2",
+    "npm": "^6.1.0",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-bootstrap-table-next": "^0.1.14",

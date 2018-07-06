@@ -6,7 +6,6 @@ import Home from "./components/Home"
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
 import {BrowserRouter, Route} from "react-router-dom"
-import "/home/thinhtn/react-base/node_modules/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 
 // Initialize Firebase
 var config = {
