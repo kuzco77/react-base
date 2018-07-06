@@ -8,7 +8,7 @@ import { stat } from 'fs';
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
 import "/home/thinhtn/react-base/node_modules/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
-import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem } from "react-bootstrap"
+import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, Image } from "react-bootstrap"
 import cellEditFactory, {Type} from 'react-bootstrap-table2-editor';
 
 const selectRow = {
@@ -62,8 +62,8 @@ class App extends Component {
 
   imageFormatter(cell, row, rowIndex, formatExtraData){
     console.log("Call Image Format '+cell+'")
-    return <img id={row} src='"+cell+"' width="100"/> 
-    // return <img id="target" src="https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1" width="100" />
+    return <Image href={row} id={row} src={cell} responsive width={100} height={100} circle/> 
+    // return <img id="target" src="https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1&w=10&h=10" />
     // return <h1>Hello, world!</h1>
   }
 
