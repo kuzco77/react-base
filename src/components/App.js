@@ -9,7 +9,7 @@ import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
 import "/home/thinhtn/react-base/node_modules/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem } from "react-bootstrap"
-import cellEditFactory from 'react-bootstrap-table2-editor';
+import cellEditFactory, {Type} from 'react-bootstrap-table2-editor';
 
 const selectRow = {
   mode: 'checkbox',
@@ -34,34 +34,53 @@ class App extends Component {
     this.state.products = [];
     this.state.columns = [{
       dataField: "idTeacher",
-      text: "Mã Giáo Viên"
+      text: "Mã Giáo Viên",
     }, {
       dataField: "name",
-      text: "Tên Giáo Viên"
+      text: "Tên Giáo Viên",
+    }, {
+      dataField: "school",
+      text: "Trường",
+
     }, {
       dataField: "achievement",
-      text: "Thành Tựu"
-    }];
+      text: "Thành Tựu",
 
-    this.state.key = ["1", "2"]
+    }, {
+      dataField: "linkAvatar",
+      text: "Avatar",
+      formatter: this.imageFormatter,
+      editCellStyle: this.editCellStyle
+    }, {
+      dataField: 'done',
+      text: 'Done',
+      }];
+
+
 
   }
 
-
+  imageFormatter(cell, row, rowIndex, formatExtraData){
+    console.log("Call Image Format '+cell+'")
+    return <img id={row} src='"+cell+"' width="100"/> 
+    // return <img id="target" src="https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1" width="100" />
+    // return <h1>Hello, world!</h1>
+  }
 
 
 
   componentDidMount() {
 
-    const rootRef = firebase.database().ref().child("ListTeacher").child("DA").child("achievement")
-    const speedRef = rootRef
-    speedRef.on("value", snap => {
-      this.setState({
-        realtimeSpeed: snap.val(),
+    const teacherIDRef = firebase.database().ref().child("ListTeacher")
+    teacherIDRef.on("value", snaps => {
+      const newProducts = []
+      snaps.forEach(snap => {
+        newProducts.push(snap.val())
       })
+
+      console.log(snaps.val())
+      this.setState({ products: newProducts })
     })
-
-
   }
 
 
@@ -109,6 +128,16 @@ class App extends Component {
 
   }
 
+  afterSaveCell(oldValue, newValue, row, column) {
+    const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
+    teacherIDRef.set(row)
+
+  }
+
+  editCellStyle (cell, row, rowIndex, colIndex) {
+    // it is suppose to return an object
+    console.log("Edit cell style")
+  }
 
 
   render() {
@@ -123,12 +152,12 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
           <Link to={"home"}>link to home</Link>
         </p>
+
         <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF.bind(this)} />
-        <Button bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
+        <Button value="Search" bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
+
         <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
-        <img id="target" src={this.state.image} />
-
-
+        <img id="target" src="https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1" width="100" />
 
         <BootstrapTable
           keyField="idTeacher"
@@ -139,29 +168,9 @@ class App extends Component {
           condensed
           cellEdit={cellEditFactory({
             mode: 'dbclick',
-            afterSaveCell: (oldValue, newValue, row, column) => {
-              console.log('After Saving Cell!!');
-              console.log(newValue)
-              // console.log(row)
-              // console.log(column)
-
-              // const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").equalTo(newValue["idTeacher"])
-              // teacherIDRef.on("value", snaps => {
-              //   // const newProducts = []
-              //   // snaps.forEach(snap => {
-              //   //   newProducts.push(snap.val())
-              //   // })
-
-              //   // console.log(snaps.val())
-              //   // this.setState({ products: newProducts })
-
-              //   console.log(snaps.val())
-              // })
-
-
-            }
+            afterSaveCell: this.afterSaveCell
           })}
-
+          
         />
 
       </form>
