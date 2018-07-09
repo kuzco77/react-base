@@ -28,6 +28,7 @@ class App extends Component {
       realtimeSpeed: 10,
       teacherAchievement: "",
       teacherID: "",
+      src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
     }
 
     this.state.products = [];
@@ -61,10 +62,24 @@ class App extends Component {
 
   imageFormatter(cell, row, rowIndex, formatExtraData) {
     // return <Image href={row} id={row} src={cell} responsive width={100} height={100} circle/> 
-    return <Image id="target" src={cell} height={100} width={100} circle={true} />
+    return <Image id="target" src={"http://braavos.me/images/posts/college-rock/the-smiths.png"} height={100} width={100} circle={true} />
     // return <h1>Hello, world!</h1>
   }
 
+  onSelectFile = e => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener(
+        "load",
+        () =>
+          this.setState({
+            src: reader.result
+          }),
+        false
+      );
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
 
 
   componentDidMount() {
@@ -107,13 +122,13 @@ class App extends Component {
       this.setState({ teacherID: searchTeacherID })
       const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherID).endAt(searchTeacherID + "\uf8ff")
       teacherIDRef.on("value", snaps => {
-        const newProducts = []
+        const products = []
         snaps.forEach(snap => {
-          newProducts.push(snap.val())
+          products.push(snap.val())
         })
 
         // console.log(snaps.val())
-        this.setState({ products: newProducts })
+        this.setState({ products })
       })
     }
   }
@@ -134,7 +149,7 @@ class App extends Component {
     console.log("Edit cell style")
   }
 
-  _crop(){
+  _crop() {
     // image in dataUrl
     console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
   }
@@ -156,11 +171,19 @@ class App extends Component {
         <Button value="Search" bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
 
         <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
-        <div
-          id="target"
-          className="avatar"
-        //  style="background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1')"
-        ></div>
+        <img id="hello" style={{
+          width: "100px",
+          height: "100px",
+          // borderRadius: "50",
+          background: "url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1')",
+        }} />
+
+        <Cropper
+          src={this.state.src}
+          ref={ref => { this.cropper = ref }}
+        />
+
+        
 
         {/* <Cropper
           ref='cropper'
@@ -168,14 +191,14 @@ class App extends Component {
           aspectRatio={16 / 9}
         /> */}
 
-        <Cropper
+        {/* <Cropper
         ref='cropper'
         src='https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1'
         style={{height: 400, width: '100%'}}
         // Cropper.js options
         aspectRatio={16 / 9}
         guides={false}
-        crop={this._crop.bind(this)} />
+        crop={this._crop.bind(this)} /> */}
 
 
         {/* <div style="height: 100px; width: 100px; background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1') center center; background-size: cover; border-radius: 999px;"></div> */}
