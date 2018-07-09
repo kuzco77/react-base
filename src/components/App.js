@@ -8,8 +8,11 @@ import { stat } from 'fs';
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
-import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem } from "react-bootstrap"
-import cellEditFactory from 'react-bootstrap-table2-editor';
+import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, Image } from "react-bootstrap"
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
+import Cropper from 'react-cropper';
+import 'cropperjs/dist/cropper.css';
+
 
 const selectRow = {
   mode: 'checkbox',
@@ -17,12 +20,6 @@ const selectRow = {
 };
 
 class App extends Component {
-
-  imageFormatter(cell, row) {
-    console.log(cell);
-    console.log(row);
-    return "<img src='" + cell + "'/>";
-  }
 
   constructor() {
     super()
@@ -37,24 +34,36 @@ class App extends Component {
     this.state.columns = [{
       dataField: "idTeacher",
       text: "Mã Giáo Viên",
-      dataSort: true
     }, {
       dataField: "name",
-      text: "Tên Giáo Viên"
+      text: "Tên Giáo Viên",
+    }, {
+      dataField: "school",
+      text: "Trường",
+
     }, {
       dataField: "achievement",
-      text: "Thành Tựu"
+      text: "Thành Tựu",
+
     }, {
       dataField: "linkAvatar",
       text: "Avatar",
-      dataFormat: this.imageFormatter
+      formatter: this.imageFormatter,
+      editCellStyle: this.editCellStyle
+    }, {
+      dataField: 'done',
+      text: 'Done',
     }];
 
 
 
   }
 
-
+  imageFormatter(cell, row, rowIndex, formatExtraData) {
+    // return <Image href={row} id={row} src={cell} responsive width={100} height={100} circle/> 
+    return <Image id="target" src={cell} height={100} width={100} circle={true} />
+    // return <h1>Hello, world!</h1>
+  }
 
 
 
@@ -67,10 +76,9 @@ class App extends Component {
         newProducts.push(snap.val())
       })
 
-      // console.log(snaps.val())
+      console.log(snaps.val())
       this.setState({ products: newProducts })
     })
-
   }
   handleChangeValueBtn() {
     const rootRef = firebase.database().ref().child("react")
@@ -116,10 +124,19 @@ class App extends Component {
   }
 
   afterSaveCell(oldValue, newValue, row, column) {
-    console.log(row)
-
     const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
     teacherIDRef.set(row)
+
+  }
+
+  editCellStyle(cell, row, rowIndex, colIndex) {
+    // it is suppose to return an object
+    console.log("Edit cell style")
+  }
+
+  _crop(){
+    // image in dataUrl
+    console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
   }
 
   render() {
@@ -135,18 +152,33 @@ class App extends Component {
           <Link to={"home"}>link to home</Link>
         </p>
 
-        <input
-          placeholder="Nhập ID giảng viên"
-          value={this.state.teacherID || ""}
-          onChange={this.handleIDTF.bind(this)}
-        />
+        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF.bind(this)} />
+        <Button value="Search" bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
 
-        {/* <Button bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button> */}
         <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
-        <img id="target" src={this.state.image} />
+        <div
+          id="target"
+          className="avatar"
+        //  style="background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1')"
+        ></div>
+
+        {/* <Cropper
+          ref='cropper'
+          src={"https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1"}
+          aspectRatio={16 / 9}
+        /> */}
+
+        <Cropper
+        ref='cropper'
+        src='https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1'
+        style={{height: 400, width: '100%'}}
+        // Cropper.js options
+        aspectRatio={16 / 9}
+        guides={false}
+        crop={this._crop.bind(this)} />
 
 
-
+        {/* <div style="height: 100px; width: 100px; background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1') center center; background-size: cover; border-radius: 999px;"></div> */}
         <BootstrapTable
           keyField="idTeacher"
           data={this.state.products}
