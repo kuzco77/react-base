@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
 import Home from "./components/Home"
+import Profile from "./components/Profile"
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
 import {BrowserRouter, Route} from "react-router-dom"
@@ -25,7 +26,8 @@ ReactDOM.render(
   <BrowserRouter>
     <div>
     <Route path="/app" component={App}/>
-    <Route path="/home" coponent={Home}/>
+    <Route path="/home" component={Home}/>
+    <Route path="/profile" component={Profile}/>
     </div>
   </BrowserRouter>,
  document.getElementById('root'));

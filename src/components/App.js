@@ -12,6 +12,8 @@ import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem,
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
+import FileUploader from "react-firebase-file-uploader";
+import Home from "./Home"
 
 
 const selectRow = {
@@ -185,20 +187,7 @@ class App extends Component {
 
         
 
-        {/* <Cropper
-          ref='cropper'
-          src={"https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1"}
-          aspectRatio={16 / 9}
-        /> */}
-
-        {/* <Cropper
-        ref='cropper'
-        src='https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1'
-        style={{height: 400, width: '100%'}}
-        // Cropper.js options
-        aspectRatio={16 / 9}
-        guides={false}
-        crop={this._crop.bind(this)} /> */}
+      
 
 
         {/* <div style="height: 100px; width: 100px; background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1') center center; background-size: cover; border-radius: 999px;"></div> */}
@@ -215,6 +204,8 @@ class App extends Component {
           })}
 
         />
+
+        <Home/>
 
       </form>
     );
