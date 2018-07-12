@@ -3,8 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import * as firebase from "firebase"
-import { stat } from 'fs';
-// import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
@@ -14,6 +12,7 @@ import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import FileUploader from "react-firebase-file-uploader";
 import Home from "./Home"
+
 
 
 const selectRow = {
@@ -26,11 +25,11 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      speed: "",
-      realtimeSpeed: 10,
-      teacherAchievement: "",
       teacherID: "",
       src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
+      selectedAvatarRow: null,
+      isUploading: false,
+      progress: 0,
     }
 
     this.state.products = [];
@@ -52,21 +51,64 @@ class App extends Component {
       dataField: "linkAvatar",
       text: "Avatar",
       formatter: this.imageFormatter,
-      editCellStyle: this.editCellStyle
-    }, {
-      dataField: 'done',
-      text: 'Done',
+      editable: false,
+
     }];
 
 
 
   }
 
-  imageFormatter(cell, row, rowIndex, formatExtraData) {
-    // return <Image href={row} id={row} src={cell} responsive width={100} height={100} circle/> 
-    return <Image id="target" src={"http://braavos.me/images/posts/college-rock/the-smiths.png"} height={100} width={100} circle={true} />
-    // return <h1>Hello, world!</h1>
+  handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });
+  handleProgress = progress => this.setState({ progress });
+  handleUploadError = error => {
+    this.setState({ isUploading: false });
+    console.error(error);
+  };
+  handleUploadSuccess = (row, filename) => {
+    this.setState({ avatar: filename, progress: 100, isUploading: false });
+    firebase
+      .storage()
+      .ref("images")
+      .child(filename)
+      .getDownloadURL()
+      .then(this.setAvatarLink.bind(this, row));
+  };
+
+  setAvatarLink = (row, url) => {
+    console.log(url, row)
+    const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"]).child("linkAvatar")
+    teacherIDRef.set(url)
   }
+
+
+  imageFormatter = (cell, row, rowIndex, formatExtraData) => {
+    // <Button color="light-blue">Light blue</Button>
+
+    return <div>
+      <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
+      <label style={{ backgroundColor: 'steelblue', color: 'white', padding: 10, borderRadius: 4, pointer: 'cursor' }}>
+        Edit
+        <FileUploader
+          hidden
+          accept="image/*"
+          storageRef={firebase.storage().ref('images')}
+          onUploadStart={this.handleUploadStart}
+          onUploadError={this.handleUploadError}
+          onUploadSuccess={this.handleUploadSuccess.bind(this, row)}
+          onProgress={this.handleProgress}
+          maxHeight={400}
+          maxWidth={400}
+        />
+      </label>
+    </div>
+  }
+
+  editAvatar = (row) => {
+    console.log("Change Ava", row)
+
+  }
+
 
   onSelectFile = e => {
     if (e.target.files && e.target.files.length > 0) {
@@ -81,7 +123,7 @@ class App extends Component {
       );
       reader.readAsDataURL(e.target.files[0]);
     }
-  };
+  }
 
 
   componentDidMount() {
@@ -104,19 +146,19 @@ class App extends Component {
     // this.props.history.push("home")
   }
 
-  onImageChange(event) {
-    if (event.target.files && event.target.files[0]) {
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        this.setState({ image: e.target.result });
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-  }
+  // onImageChange = (event) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     let reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       this.setState({ image: e.target.result });
+  //     };
+  //     reader.readAsDataURL(event.target.files[0]);
+  //   }
+  // }
 
 
 
-  handleIDTF(event) {
+  handleIDTF = (event) => {
     const searchTeacherID = event.target.value
 
     if (searchTeacherID !== undefined) {
@@ -135,11 +177,6 @@ class App extends Component {
     }
   }
 
-
-  handleSearchBtn(event) {
-
-  }
-
   afterSaveCell(oldValue, newValue, row, column) {
     const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
     teacherIDRef.set(row)
@@ -156,6 +193,11 @@ class App extends Component {
     console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
   }
 
+  handleEditAvatar = (somethingKool) => {
+    console.log("The real change to avatar")
+    console.log(somethingKool)
+  }
+
   render() {
     return (
       <form className="App">
@@ -169,28 +211,10 @@ class App extends Component {
           <Link to={"home"}>link to home</Link>
         </p>
 
-        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF.bind(this)} />
-        <Button value="Search" bsStyle="success" onClick={this.handleSearchBtn.bind(this)}> Search </Button>
+        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
+        {/* <input type="file" onChange={this.onImageChange} className="filetype" id="group_image" /> */}
+        <Button bsStyle="success">+</Button>
 
-        <input type="file" onChange={this.onImageChange.bind(this)} className="filetype" id="group_image" />
-        <img id="hello" style={{
-          width: "100px",
-          height: "100px",
-          // borderRadius: "50",
-          background: "url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1')",
-        }} />
-
-        <Cropper
-          src={this.state.src}
-          ref={ref => { this.cropper = ref }}
-        />
-
-        
-
-      
-
-
-        {/* <div style="height: 100px; width: 100px; background: url('https://www.dropbox.com/s/r7imoxdrochvt5a/19850879_1472361676144032_1126486230_o.jpg?dl=1') center center; background-size: cover; border-radius: 999px;"></div> */}
         <BootstrapTable
           keyField="idTeacher"
           data={this.state.products}
@@ -205,7 +229,7 @@ class App extends Component {
 
         />
 
-        <Home/>
+
 
       </form>
     );

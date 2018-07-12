@@ -52,8 +52,9 @@ class ProfilePage extends Component {
             onUploadError={this.handleUploadError}
             onUploadSuccess={this.handleUploadSuccess}
             onProgress={this.handleProgress}
-            maxHeight={200}
-            maxWidth={200}
+            maxHeight={400}
+            maxWidth={400}
+            
           />
         </form>
       </div>
