@@ -12,6 +12,7 @@ import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import FileUploader from "react-firebase-file-uploader";
 import Home from "./Home"
+import IntroTitle from "./IntroTitle"
 
 
 
@@ -201,11 +202,7 @@ class App extends Component {
   render() {
     return (
       <form className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Trang quản lý EDUMET</h1>
-
-        </header>
+        <IntroTitle/>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
           <Link to={"home"}>link to home</Link>

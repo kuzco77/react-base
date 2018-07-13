@@ -6,7 +6,8 @@ import Home from "./components/Home"
 import Profile from "./components/Profile"
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
-import {BrowserRouter, Route} from "react-router-dom"
+import {BrowserRouter, Route, Redirect} from "react-router-dom"
+import AddTeacher from './components/AddTeacher';
 
 
 
@@ -23,11 +24,13 @@ var config = {
 
 
 ReactDOM.render(
-  <BrowserRouter>
+  <BrowserRouter >
     <div>
     <Route path="/app" component={App}/>
     <Route path="/home" component={Home}/>
     <Route path="/profile" component={Profile}/>
+    <Route path="/addTeacher" component={AddTeacher}/>
+    {/* <Redirect from="/" to="app" /> */}
     </div>
   </BrowserRouter>,
  document.getElementById('root'));
