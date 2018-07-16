@@ -6,20 +6,27 @@ import * as firebase from "firebase"
 import "react-bootstrap-table-next"
 import BootstrapTable from 'react-bootstrap-table-next';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
-import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, Image } from "react-bootstrap"
+import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, Image, Modal, OverlayTrigger, Popover, Tooltip } from "react-bootstrap"
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import FileUploader from "react-firebase-file-uploader";
 import Home from "./Home"
 import IntroTitle from "./IntroTitle"
-
+import AddTeacher from "./AddTeacher"
 
 
 const selectRow = {
   mode: 'checkbox',
   clickToSelect: true
 };
+
+const popover = (
+  <Popover id="modal-popover" title="popover">
+    very popover. such engagement
+  </Popover>
+);
+const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
 
 class App extends Component {
 
@@ -31,6 +38,7 @@ class App extends Component {
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
+      show: false,
     }
 
     this.state.products = [];
@@ -53,11 +61,27 @@ class App extends Component {
       text: "Avatar",
       formatter: this.imageFormatter,
       editable: false,
-
+    }, {
+      dataField: "Action",
+      text: "Action",
+      formatter: this.deleteFormater,
+      editable: false
     }];
 
 
 
+  }
+
+  deleteFormater = (cell, row, rowIndex, formatExtraData) => {
+    return <div>
+      <Button bsStyle="danger" onClick={this.handleDeleteTeacher.bind(this, row)}>Delete</Button>
+    </div>
+  }
+
+  handleDeleteTeacher = (row, event) => {
+    console.log(row["idTeacher"])
+    const listTeacher = firebase.database().ref("ListTeacher")
+    listTeacher.child(row["idTeacher"]).remove()
   }
 
   handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });
@@ -105,28 +129,6 @@ class App extends Component {
     </div>
   }
 
-  editAvatar = (row) => {
-    console.log("Change Ava", row)
-
-  }
-
-
-  onSelectFile = e => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        () =>
-          this.setState({
-            src: reader.result
-          }),
-        false
-      );
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  }
-
-
   componentDidMount() {
 
     const teacherIDRef = firebase.database().ref().child("ListTeacher")
@@ -146,18 +148,6 @@ class App extends Component {
     speedRef.set(this.state.speed)
     // this.props.history.push("home")
   }
-
-  // onImageChange = (event) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     let reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       this.setState({ image: e.target.result });
-  //     };
-  //     reader.readAsDataURL(event.target.files[0]);
-  //   }
-  // }
-
-
 
   handleIDTF = (event) => {
     const searchTeacherID = event.target.value
@@ -184,51 +174,63 @@ class App extends Component {
 
   }
 
-  editCellStyle(cell, row, rowIndex, colIndex) {
-    // it is suppose to return an object
-    console.log("Edit cell style")
+  handleAddTeacherBtn = (event) => {
+    this.setState({show: true,})
   }
 
-  _crop() {
-    // image in dataUrl
-    console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
+  handleClose = (event) => {
+    this.setState({show: false})
   }
 
-  handleEditAvatar = (somethingKool) => {
-    console.log("The real change to avatar")
-    console.log(somethingKool)
-  }
+  
 
   render() {
     return (
-      <form className="App">
-        <IntroTitle/>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+      <div>
+        <IntroTitle />
+        <form className="App">
+
+          <p className="App-intro">
+            To get started, edit <code>src/App.js</code> and save to reload.
           <Link to={"home"}>link to home</Link>
-        </p>
+          </p>
 
-        <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
-        {/* <input type="file" onChange={this.onImageChange} className="filetype" id="group_image" /> */}
-        <Button bsStyle="success">+</Button>
+          <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
+          <OverlayTrigger placement="right" overlay={tooltip}>
+            <Button bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
+          </OverlayTrigger>
+          
 
-        <BootstrapTable
-          keyField="idTeacher"
-          data={this.state.products}
-          columns={this.state.columns}
-          striped
-          hover
-          condensed
-          cellEdit={cellEditFactory({
-            mode: 'dbclick',
-            afterSaveCell: this.afterSaveCell
-          })}
-
-        />
+          <Modal show={this.state.show} onHide={this.handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Thêm Giảng Viên</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <AddTeacher/>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={this.handleClose}>Close</Button>
+            </Modal.Footer>
+          </Modal>
 
 
+          <BootstrapTable
+            keyField="idTeacher"
+            data={this.state.products}
+            columns={this.state.columns}
+            striped
+            hover
+            condensed
+            cellEdit={cellEditFactory({
+              mode: 'dbclick',
+              afterSaveCell: this.afterSaveCell
+            })}
 
-      </form>
+          />
+
+        </form>
+      </div>
+
     );
   }
 }
