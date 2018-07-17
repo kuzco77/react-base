@@ -13,7 +13,10 @@ import 'cropperjs/dist/cropper.css';
 import FileUploader from "react-firebase-file-uploader";
 import Home from "./Home"
 import IntroTitle from "./IntroTitle"
-import AddTeacher from "./AddTeacher"
+import AddTeacher from "./Teacher/AddTeacher"
+import AddTeacherModal from './Teacher/AddTeacherModal';
+import TeacherTable from './Teacher/TeacherTable';
+import { stat } from 'fs';
 
 
 const selectRow = {
@@ -33,156 +36,54 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      teacherID: "",
+      searchTeacherID: "",
       src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
-      show: false,
+      showAddTeacherModal: false,
     }
-
-    this.state.products = [];
-    this.state.columns = [{
-      dataField: "idTeacher",
-      text: "Mã Giáo Viên",
-    }, {
-      dataField: "name",
-      text: "Tên Giáo Viên",
-    }, {
-      dataField: "school",
-      text: "Trường",
-
-    }, {
-      dataField: "achievement",
-      text: "Thành Tựu",
-
-    }, {
-      dataField: "linkAvatar",
-      text: "Avatar",
-      formatter: this.imageFormatter,
-      editable: false,
-    }, {
-      dataField: "Action",
-      text: "Action",
-      formatter: this.deleteFormater,
-      editable: false
-    }];
-
-
-
   }
 
-  deleteFormater = (cell, row, rowIndex, formatExtraData) => {
-    return <div>
-      <Button bsStyle="danger" onClick={this.handleDeleteTeacher.bind(this, row)}>Delete</Button>
-    </div>
-  }
-
-  handleDeleteTeacher = (row, event) => {
-    console.log(row["idTeacher"])
-    const listTeacher = firebase.database().ref("ListTeacher")
-    listTeacher.child(row["idTeacher"]).remove()
-  }
-
-  handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });
-  handleProgress = progress => this.setState({ progress });
-  handleUploadError = error => {
-    this.setState({ isUploading: false });
-    console.error(error);
-  };
-  handleUploadSuccess = (row, filename) => {
-    this.setState({ avatar: filename, progress: 100, isUploading: false });
-    firebase
-      .storage()
-      .ref("images")
-      .child(filename)
-      .getDownloadURL()
-      .then(this.setAvatarLink.bind(this, row));
-  };
-
-  setAvatarLink = (row, url) => {
-    console.log(url, row)
-    const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"]).child("linkAvatar")
-    teacherIDRef.set(url)
-  }
-
-
-  imageFormatter = (cell, row, rowIndex, formatExtraData) => {
-    // <Button color="light-blue">Light blue</Button>
-
-    return <div>
-      <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
-      <label style={{ backgroundColor: 'steelblue', color: 'white', padding: 10, borderRadius: 4, pointer: 'cursor' }}>
-        Edit
-        <FileUploader
-          hidden
-          accept="image/*"
-          storageRef={firebase.storage().ref('images')}
-          onUploadStart={this.handleUploadStart}
-          onUploadError={this.handleUploadError}
-          onUploadSuccess={this.handleUploadSuccess.bind(this, row)}
-          onProgress={this.handleProgress}
-          maxHeight={400}
-          maxWidth={400}
-        />
-      </label>
-    </div>
-  }
-
-  componentDidMount() {
-
-    const teacherIDRef = firebase.database().ref().child("ListTeacher")
-    teacherIDRef.on("value", snaps => {
-      const newProducts = []
-      snaps.forEach(snap => {
-        newProducts.push(snap.val())
-      })
-
-      console.log(snaps.val())
-      this.setState({ products: newProducts })
-    })
-  }
   handleChangeValueBtn() {
     const rootRef = firebase.database().ref().child("react")
     const speedRef = rootRef.child("speed")
     speedRef.set(this.state.speed)
-    // this.props.history.push("home")
+
   }
 
   handleIDTF = (event) => {
     const searchTeacherID = event.target.value
+    this.setState({searchTeacherID: ""})
+    // if (searchTeacherID !== undefined) {
 
-    if (searchTeacherID !== undefined) {
+    //   this.setState({ searchTeacherID })
+    //   // const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherID).endAt(searchTeacherID + "\uf8ff")
+    //   // teacherIDRef.on("value", snaps => {
+    //   //   const products = []
+    //   //   snaps.forEach(snap => {
+    //   //     products.push(snap.val())
+    //   //   })
 
-      this.setState({ teacherID: searchTeacherID })
-      const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherID).endAt(searchTeacherID + "\uf8ff")
-      teacherIDRef.on("value", snaps => {
-        const products = []
-        snaps.forEach(snap => {
-          products.push(snap.val())
-        })
-
-        // console.log(snaps.val())
-        this.setState({ products })
-      })
-    }
-  }
-
-  afterSaveCell(oldValue, newValue, row, column) {
-    const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
-    teacherIDRef.set(row)
-
+    //   //   // console.log(snaps.val())
+    //   //   this.setState({ products })
+    //   // })
+    // } else {
+    //   this.setState({searchTeacherID: ""})
+    // }
   }
 
   handleAddTeacherBtn = (event) => {
-    this.setState({show: true,})
+    this.setState({showAddTeacherModal: true,})
   }
 
   handleClose = (event) => {
-    this.setState({show: false})
+    this.setState({showAddTeacherModal: false})
   }
 
-  
+  handleSearchTeacher = (event) => {
+    this.state.searchTeacherID = event.target.value
+  }
 
   render() {
     return (
@@ -191,42 +92,17 @@ class App extends Component {
         <form className="App">
 
           <p className="App-intro">
-            To get started, edit <code>src/App.js</code> and save to reload.
-          <Link to={"home"}>link to home</Link>
+            Tìm kiếm theo mã giảng viên
           </p>
 
           <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
           <OverlayTrigger placement="right" overlay={tooltip}>
             <Button bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
           </OverlayTrigger>
-          
 
-          <Modal show={this.state.show} onHide={this.handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Thêm Giảng Viên</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <AddTeacher/>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button onClick={this.handleClose}>Close</Button>
-            </Modal.Footer>
-          </Modal>
+          <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />
 
-
-          <BootstrapTable
-            keyField="idTeacher"
-            data={this.state.products}
-            columns={this.state.columns}
-            striped
-            hover
-            condensed
-            cellEdit={cellEditFactory({
-              mode: 'dbclick',
-              afterSaveCell: this.afterSaveCell
-            })}
-
-          />
+          <TeacherTable searchTeacherID={this.state.searchTeacherID}/>
 
         </form>
       </div>
