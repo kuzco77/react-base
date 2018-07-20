@@ -8,7 +8,10 @@ class NewHeader extends Component {
    render() {
       return (
         <div style={{margin: "auto"}} id="header">
-        <a href="/" id="logo">Edumet</a>
+        <div style={{textAlign: "center"}}>
+          <a href="/" id="logo">Edumet</a>
+        </div>
+        
         <ul id="menu">
           <li><a href="/app"><span>Home</span></a></li>
           <li><a href="/"><span>Tutorials</span></a></li>

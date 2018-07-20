@@ -1,28 +1,14 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import * as firebase from "firebase"
 import "react-bootstrap-table-next"
-import BootstrapTable from 'react-bootstrap-table-next';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 import { Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, Image, Modal, OverlayTrigger, Popover, Tooltip } from "react-bootstrap"
-import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
-import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
-import FileUploader from "react-firebase-file-uploader";
-import Home from "./Home"
 import IntroTitle from "./IntroTitle"
-import AddTeacher from "./Teacher/AddTeacher"
 import AddTeacherModal from './Teacher/AddTeacherModal';
 import TeacherTable from './Teacher/TeacherTable';
-import { stat } from 'fs';
-
-
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true
-};
+import NewHeader from "./Header/NewHeader"
 
 const popover = (
   <Popover id="modal-popover" title="popover">
@@ -88,7 +74,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <IntroTitle />
+        {/* <IntroTitle /> */}
+        <NewHeader/>
         <form className="App">
 
           <p className="App-intro">

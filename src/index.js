@@ -25,7 +25,7 @@ var config = {
 ReactDOM.render(
   <BrowserRouter >
     <div>
-    <Route path="/app" component={App}/>
+    <Route path="/" component={App}/>
     <Route path="/home" component={Home}/>
     <Route path="/profile" component={Profile}/>
     {/* <Redirect from="/" to="app" /> */}

@@ -22,27 +22,49 @@ class TeacherTable extends Component {
         this.state.columns = [{
             dataField: "idTeacher",
             text: "Mã Giáo Viên",
+            headerStyle: {
+                width: "100px",
+                textAlign: "center",
+            }
         }, {
             dataField: "name",
             text: "Tên Giáo Viên",
+            headerStyle: {
+                width: "120px",
+                textAlign: "center",
+            }
         }, {
             dataField: "school",
             text: "Trường",
-
+            headerStyle: {
+                width: "120px",
+                textAlign: "center",
+            }
         }, {
             dataField: "achievement",
             text: "Thành Tựu",
+            headerStyle: {
+                textAlign: "center",
+            }
 
         }, {
             dataField: "linkAvatar",
             text: "Avatar",
             formatter: this.imageFormatter,
             editable: false,
+            headerStyle: {
+                width: "120px",
+                textAlign: "center",
+            }
         }, {
             dataField: "Action",
             text: "Action",
             formatter: this.deleteFormater,
-            editable: false
+            editable: false,
+            headerStyle: {
+                width: "100px",
+                textAlign: "center",
+            }
         }];
     }
 
