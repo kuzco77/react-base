@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import * as firebase from "firebase"
 import BootstrapTable from "react-bootstrap-table-next"
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
-import { Button, Image, Modal } from "react-bootstrap"
+import { Button, Image, Well } from "react-bootstrap"
 import FileUploader from "react-firebase-file-uploader";
 import PropType from "prop-types"
 import DeleteTeacherModal from './DeleteTeacherModal';
-import NewHeader from "../Header/NewHeader"
 
 class TeacherTable extends Component {
     constructor() {
@@ -19,25 +18,25 @@ class TeacherTable extends Component {
         }
 
         this.state.products = [];
-        this.state.columns = [{
+        const columns = [{
             dataField: "idTeacher",
             text: "Mã Giáo Viên",
             headerStyle: {
-                width: "100px",
+                width: "5%",
                 textAlign: "center",
             }
         }, {
             dataField: "name",
             text: "Tên Giáo Viên",
             headerStyle: {
-                width: "120px",
+                width: "7%",
                 textAlign: "center",
             }
         }, {
             dataField: "school",
             text: "Trường",
             headerStyle: {
-                width: "120px",
+                width: "10%",
                 textAlign: "center",
             }
         }, {
@@ -45,30 +44,46 @@ class TeacherTable extends Component {
             text: "Thành Tựu",
             headerStyle: {
                 textAlign: "center",
-            }
-
+            },
+            editor: {
+                type: "textarea",
+                
+            },
+            editorStyle: {
+                height: "120px"
+            },
+            formatter: this.achievementFormatter
         }, {
             dataField: "linkAvatar",
             text: "Avatar",
-            formatter: this.imageFormatter,
+            formatter: this.avatarFormater,
             editable: false,
             headerStyle: {
-                width: "120px",
+                width: "7%",
                 textAlign: "center",
             }
         }, {
             dataField: "Action",
             text: "Action",
-            formatter: this.deleteFormater,
+            formatter: this.actionFormater,
             editable: false,
             headerStyle: {
-                width: "100px",
+                width: "7%",
                 textAlign: "center",
-            }
+            },
         }];
+
+        columns.forEach((value, index) => {
+            
+            value.editor = {
+                type: "textarea",  
+            }
+        })
+
+        this.state.columns = columns
     }
 
-    imageFormatter = (cell, row, rowIndex, formatExtraData) => {
+    avatarFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div>
             <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
             <label style={{ backgroundColor: 'steelblue', color: 'white', padding: 10, borderRadius: 4, pointer: 'cursor' }}>
@@ -87,6 +102,24 @@ class TeacherTable extends Component {
             </label>
         </div>
     }
+
+    actionFormater = (cell, row, rowIndex, formatExtraData) => {
+        return <div style={{ margin: "auto auto" }}>
+            <Button bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
+            <DeleteTeacherModal
+                show={this.state.showDeleteTeacherModal}
+                onHide={this.onHideDeleteTeacherModal} 
+                idTeacher={row["idTeacher"]} 
+            />
+        </div>
+    }
+
+    achievementFormatter = (cell, row, rowIndex, formatExtraData) => {
+        return <div style={{ margin: "auto auto" }}>
+            <p style={{whiteSpace: "pre-line", textAlign: "left", borderLeft: "10px"}}>{row.achievement}</p>
+        </div>
+    }
+
 
     handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });
     handleProgress = progress => this.setState({ progress });
@@ -134,16 +167,7 @@ class TeacherTable extends Component {
     }
 
 
-    deleteFormater = (cell, row, rowIndex, formatExtraData) => {
-        return <div style={{ margin: "auto auto" }}>
-            <Button bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
-            <DeleteTeacherModal
-                show={this.state.showDeleteTeacherModal}
-                onHide={this.onHideDeleteTeacherModal} 
-                idTeacher={row["idTeacher"]} 
-            />
-        </div>
-    }
+    
 
     handleShowDeleteModal = (row, event) => {
         this.setState({ showDeleteTeacherModal: true })
@@ -166,7 +190,8 @@ class TeacherTable extends Component {
                 condensed
                 cellEdit={cellEditFactory({
                     mode: 'dbclick',
-                    afterSaveCell: this.afterSaveCell
+                    afterSaveCell: this.afterSaveCell,
+                    blurToSave: true
                 })}
             />
         )

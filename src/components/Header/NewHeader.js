@@ -13,11 +13,11 @@ class NewHeader extends Component {
         </div>
         
         <ul id="menu">
-          <li><a href="/app"><span>Home</span></a></li>
-          <li><a href="/"><span>Tutorials</span></a></li>
-          <li><a href="/"><span>Articles</span></a></li>
-          <li><a href="/"><span>About me</span></a></li>
-          <li><a href="/"><span>Contact</span></a></li>
+          <li><a href="/"><span>Homepage </span></a></li>
+          <li><a href="/app"><span>Teacher</span></a></li>
+          <li><a href="/profile"><span>Class</span></a></li>
+          <li><a href="/"><span>Công ty</span></a></li>
+          <li><a href="/"><span>Liên hệ</span></a></li>
         </ul>
       </div>
       )
