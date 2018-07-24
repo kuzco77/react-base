@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 import NewHeader from "./components/Header/NewHeader"
 import TeacherTable from './components/Teacher/TeacherTable';
 import ClassRoomController from "./components/ClassRoom/ClassRoomController"
+import AddClassRoomModal from "./components/ClassRoom/AddClassRoomModal"
 
 
 // Initialize Firebase
@@ -31,6 +32,7 @@ ReactDOM.render(
       <Route exact path="/" component={Home} />
       <Route path="/app" component={App} />
       <Route path="/classRoom" component={ClassRoomController} />
+      <Route path="/about" component={AddClassRoomModal} />
     </div>
   </BrowserRouter>,
   document.getElementById('root'));

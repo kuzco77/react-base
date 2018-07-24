@@ -3,10 +3,9 @@ import '../App.css';
 import * as firebase from "firebase"
 import "react-bootstrap-table-next"
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
-import { Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap"
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap"
 import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from '../Teacher/AddTeacherModal';
-import TeacherTable from '../Teacher/TeacherTable';
 import ClassRoomTable from './ClassRoomTable';
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;

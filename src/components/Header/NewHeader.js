@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 // import './App.css';
@@ -13,11 +14,11 @@ class NewHeader extends Component {
         </div>
         
         <ul id="menu">
-          <li><a href="/"><span>Homepage </span></a></li>
+          <li><a href="/"><span>Home </span></a></li>
           <li><a href="/app"><span>Teacher</span></a></li>
           <li><a href="/classRoom"><span>Class</span></a></li>
-          <li><a href="/"><span>Công ty</span></a></li>
-          <li><a href="/"><span>Liên hệ</span></a></li>
+          <li><a href="/about"><span>About us</span></a></li>
+          <li><a href="/contact"><span>Contact</span></a></li>
         </ul>
       </div>
       )

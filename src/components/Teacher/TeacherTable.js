@@ -59,7 +59,7 @@ class TeacherTable extends Component {
             formatter: this.avatarFormater,
             editable: false,
             headerStyle: {
-                width: "7%",
+                width: "12%",
                 textAlign: "center",
             }
         }, {
@@ -86,7 +86,15 @@ class TeacherTable extends Component {
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div>
             <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
-            <label style={{ backgroundColor: 'steelblue', color: 'white', padding: 10, borderRadius: 4, pointer: 'cursor' }}>
+            <label style={{
+                backgroundColor: 'steelblue',
+                color: 'white',
+                padding: 10,
+                borderRadius: 4,
+                pointer: 'cursor',
+                marginTop: "5px",
+                marginBottom: "5px"
+            }}>
                 Edit
             <FileUploader
                     hidden
@@ -162,7 +170,7 @@ class TeacherTable extends Component {
         // const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("phoneNumber").equalTo("01696182359")
 
         // teacherInListClassRef.once("value", (snaps) => {
-            
+
         //     console.log("Snapsu la",snaps.val())
         //     var TT = {}
         //     snaps.forEach((snap) => {
@@ -171,7 +179,7 @@ class TeacherTable extends Component {
         //     })
 
         //     firebase.database().ref().child("ListTeacher").child("TT").set(TT)
-            
+
         // })
 
     }
@@ -206,10 +214,10 @@ class TeacherTable extends Component {
             })
 
         })
-        
+
     }
 
-   
+
 
     render() {
         return (
