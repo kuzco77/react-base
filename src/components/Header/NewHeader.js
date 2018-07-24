@@ -15,7 +15,7 @@ class NewHeader extends Component {
         <ul id="menu">
           <li><a href="/"><span>Homepage </span></a></li>
           <li><a href="/app"><span>Teacher</span></a></li>
-          <li><a href="/profile"><span>Class</span></a></li>
+          <li><a href="/classRoom"><span>Class</span></a></li>
           <li><a href="/"><span>Công ty</span></a></li>
           <li><a href="/"><span>Liên hệ</span></a></li>
         </ul>

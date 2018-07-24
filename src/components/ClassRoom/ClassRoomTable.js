@@ -5,9 +5,9 @@ import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import { Button, Image, Well } from "react-bootstrap"
 import FileUploader from "react-firebase-file-uploader";
 import PropType from "prop-types"
-import DeleteTeacherModal from './DeleteTeacherModal';
+import DeleteTeacherModal from '../Teacher/DeleteTeacherModal';
 
-class TeacherTable extends Component {
+class ClassRoomTable extends Component {
     constructor() {
         super()
         this.state = {
@@ -19,29 +19,44 @@ class TeacherTable extends Component {
 
         this.state.products = [];
         const columns = [{
-            dataField: "idTeacher",
-            text: "Mã Giáo Viên",
+            dataField: "idClass",
+            text: "Mã Lớp Học",
             headerStyle: {
                 width: "5%",
                 textAlign: "center",
             }
         }, {
-            dataField: "name",
-            text: "Tên Giáo Viên",
+            dataField: "grade",
+            text: "Lớp",
             headerStyle: {
                 width: "7%",
                 textAlign: "center",
             }
         }, {
-            dataField: "school",
-            text: "Trường",
+            dataField: "subject",
+            text: "Môn học",
             headerStyle: {
-                width: "10%",
+                width: "7%",
                 textAlign: "center",
             }
         }, {
-            dataField: "achievement",
-            text: "Thành Tựu",
+            dataField: "time",
+            text: "Thời gian",
+            headerStyle: {
+                width: "7%",
+                textAlign: "center",
+            }
+        }, {
+            dataField: "introClass1",
+            text: "Giới thiệu 1",
+            headerStyle: {
+                width: "20%",
+                textAlign: "center",
+            },
+            // formatter: this.achievementFormatter
+        }, {
+            dataField: "introClass2",
+            text: "Giới thiệu 2",
             headerStyle: {
                 textAlign: "center",
             },
@@ -52,9 +67,9 @@ class TeacherTable extends Component {
             editorStyle: {
                 height: "120px"
             },
-            formatter: this.achievementFormatter
+            // formatter: this.achievementFormatter
         }, {
-            dataField: "linkAvatar",
+            dataField: "teacher.linkAvatar",
             text: "Avatar",
             formatter: this.avatarFormater,
             editable: false,
@@ -62,6 +77,13 @@ class TeacherTable extends Component {
                 width: "7%",
                 textAlign: "center",
             }
+        }, {
+            dataField: "phoneNumber",
+            text: "Số điện thoại",
+            headerStyle: {
+                width: "7%",
+                textAlign: "center",
+            },
         }, {
             dataField: "Action",
             text: "Action",
@@ -145,13 +167,9 @@ class TeacherTable extends Component {
 
     componentDidMount() {
 
-        var teacherIDRef = firebase.database().ref().child("ListTeacher")
-        if (this.state.searchTeacherID !== "") {
-            teacherIDRef = teacherIDRef.orderByChild("idTeacher").startAt(this.state.searchTeacherID).endAt(this.state.searchTeacherID + "\uf8ff")
-        }
+        var classRef = firebase.database().ref().child("ListClass")
 
-
-        teacherIDRef.on("value", snaps => {
+        classRef.on("value", snaps => {
             const newProducts = []
             snaps.forEach(snap => {
                 newProducts.push(snap.val())
@@ -229,8 +247,8 @@ class TeacherTable extends Component {
         )
     }
 }
-export default TeacherTable;
+export default ClassRoomTable;
 
-TeacherTable.propTypes = {
+ClassRoomTable.propTypes = {
     searchTeacherID: PropType.string
 }

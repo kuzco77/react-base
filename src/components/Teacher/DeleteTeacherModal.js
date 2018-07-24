@@ -36,5 +36,5 @@ export default DeleteTeacherModal;
 DeleteTeacherModal.propTypes = {
     show: PropType.bool.isRequired,
     onHide: PropType.func.isRequired,
-    teacherID: PropType.string.isRequired,
+    idTeacher: PropType.string.isRequired,
 }

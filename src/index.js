@@ -8,7 +8,8 @@ import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 import NewHeader from "./components/Header/NewHeader"
-
+import TeacherTable from './components/Teacher/TeacherTable';
+import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 
 
 // Initialize Firebase
@@ -29,7 +30,7 @@ ReactDOM.render(
       <NewHeader/>
       <Route exact path="/" component={Home} />
       <Route path="/app" component={App} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/classRoom" component={ClassRoomController} />
     </div>
   </BrowserRouter>,
   document.getElementById('root'));
