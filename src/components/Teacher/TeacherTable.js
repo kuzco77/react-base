@@ -117,7 +117,7 @@ class TeacherTable extends Component {
             <DeleteTeacherModal
                 show={this.state.showDeleteTeacherModal}
                 onHide={this.onHideDeleteTeacherModal}
-                idTeacher={row.idTeacher}
+                idTeacher={this.state.idTeacherOfDeleteModal}
             />
         </div>
     }
@@ -192,7 +192,8 @@ class TeacherTable extends Component {
 
 
     handleShowDeleteModal = (row, event) => {
-        this.setState({ showDeleteTeacherModal: true })
+        this.setState({ showDeleteTeacherModal: true,
+            idTeacherOfDeleteModal: row.idTeacher })
     }
 
     afterSaveCell(oldValue, newValue, row, column) {
@@ -216,8 +217,6 @@ class TeacherTable extends Component {
         })
 
     }
-
-
 
     render() {
         return (

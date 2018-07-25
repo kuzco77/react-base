@@ -10,6 +10,7 @@ class DeleteTeacherModal extends Component {
 
     handleDeleteTeacher = (row, event) => {
         const listTeacher = firebase.database().ref("ListTeacher")
+        console.log("DeleteTeacherModel: idTeacher ", this.props.idTeacher)
         listTeacher.child(this.props.idTeacher).remove()
         this.props.onHide()
     }

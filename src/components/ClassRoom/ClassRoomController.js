@@ -7,6 +7,7 @@ import { Button, OverlayTrigger, Tooltip } from "react-bootstrap"
 import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from '../Teacher/AddTeacherModal';
 import ClassRoomTable from './ClassRoomTable';
+import AddClassRoomModal from './AddClassRoomModal';
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
 
@@ -20,7 +21,7 @@ class ClassRoomController extends Component {
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
-      showAddTeacherModal: false,
+      showAddClassModal: false,
     }
   }
 
@@ -36,32 +37,15 @@ class ClassRoomController extends Component {
   }
 
   handleIDTF = (event) => {
-    const searchTeacherID = event.target.value
     this.setState({searchTeacherID: ""})
-    // if (searchTeacherID !== undefined) {
-
-    //   this.setState({ searchTeacherID })
-    //   // const teacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("idTeacher").startAt(searchTeacherID).endAt(searchTeacherID + "\uf8ff")
-    //   // teacherIDRef.on("value", snaps => {
-    //   //   const products = []
-    //   //   snaps.forEach(snap => {
-    //   //     products.push(snap.val())
-    //   //   })
-
-    //   //   // console.log(snaps.val())
-    //   //   this.setState({ products })
-    //   // })
-    // } else {
-    //   this.setState({searchTeacherID: ""})
-    // }
   }
 
-  handleAddTeacherBtn = (event) => {
-    this.setState({showAddTeacherModal: true,})
+  handleAddClassBtn = (event) => {
+    this.setState({showAddClassModal: true,})
   }
 
   handleClose = (event) => {
-    this.setState({showAddTeacherModal: false})
+    this.setState({showAddClassModal: false})
   }
 
   handleSearchTeacher = (event) => {
@@ -80,10 +64,10 @@ class ClassRoomController extends Component {
 
           <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
+            <Button bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
           </OverlayTrigger>
 
-          <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />
+          <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />
 
           <ClassRoomTable searchTeacherID={this.state.searchTeacherID}/>
 

@@ -16,6 +16,8 @@ class ClassRoomTable extends Component {
             progress: 0,
             showAddClassRoomModal: false,
             showSelectTeacherModal: false,
+            showDeleteTeacherModal: false,
+            idClassOfSelectedTeacherModal: "",
         }
 
         this.state.products = [];
@@ -107,22 +109,27 @@ class ClassRoomTable extends Component {
         this.state.columns = columns
     }
 
-    handleChangeBtn = (event) => {
+    handleChangeBtn = (row, event) => {
         console.log("Neu yeu thuong nguoi sau, thi xin em cx dung quen ten anh")
-        this.setState({showSelectTeacherModal: true})
+        this.setState({
+            showSelectTeacherModal: true,
+            idClassOfSelectedTeacherModal: row.idClass
+        })
     }
 
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
+        const teacher = row.teacher
+        const nameTeacher = teacher.name
         return <div>
             <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
-            
-            <Button style={{marginTop: "5px", marginBottom: "5px"}} bsStyle="info" onClick={this.handleChangeBtn}>
+            <p>{nameTeacher}</p>
+            <Button style={{marginTop: "0px", marginBottom: "5px"}} bsStyle="info" onClick={this.handleChangeBtn.bind(this, row)}>
             Thay doi
             </Button>
             <SelectTeacherForClassRoomModal
                 show={this.state.showSelectTeacherModal}
                 onHide={this.onHideSelectTeacherModal}
-                idClass={row.idClass}
+                idClass={this.state.idClassOfSelectedTeacherModal}
             />
         </div>
     }
@@ -180,25 +187,8 @@ class ClassRoomTable extends Component {
     }
 
     afterSaveCell(oldValue, newValue, row, column) {
-        const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
-        teacherIDRef.set(row)
-
-        const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
-        const teacherRefsThatNeedToChange = []
-        teacherInListClassRef.once("value", (snaps) => {
-            snaps.forEach((snap) => {
-                // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-                snap.ref.child("teacher").set(row, (error) => {
-                    if (error) {
-                        console.log("Co loi khi cap nhat thong tin giao vien")
-                    } else {
-                        console.log("Cap nhat thong tin giao vien thanh cong")
-                    }
-                })
-            })
-
-        })
-        
+        const classIDRef = firebase.database().ref().child("ListClass").child(row.idClass)
+        classIDRef.set(row)
     }
 
    

@@ -89,36 +89,15 @@ class SelectTeacherForClassRoomModal extends Component {
     }
 
     handleAddTeacher = (row, event) => {
-        this.props.onHide
+        
         const classRef = firebase.database().ref().child("ListClass").child(this.props.idClass).child("teacher")
-        classRef.once("value", (snap) => {
-            console.log(snap.val())
-        })
+        // classRef.once("value", (snap) => {
+        //     console.log("teacher before change",snap.val())
+        //     console.log("teacher after change", row)
+        // })
+        classRef.set(row)
+        this.props.onHide()
     }
-
-    afterSaveCell(oldValue, newValue, row, column) {
-        const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
-        teacherIDRef.set(row)
-
-        const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
-        const teacherRefsThatNeedToChange = []
-        teacherInListClassRef.once("value", (snaps) => {
-            snaps.forEach((snap) => {
-                // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-                snap.ref.child("teacher").set(row, (error) => {
-                    if (error) {
-                        console.log("Co loi khi cap nhat thong tin giao vien")
-                    } else {
-                        console.log("Cap nhat thong tin giao vien thanh cong")
-                    }
-                })
-            })
-
-        })
-
-    }
-
-
 
     render() {
         return (

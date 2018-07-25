@@ -11,6 +11,7 @@ import NewHeader from "./components/Header/NewHeader"
 import TeacherTable from './components/Teacher/TeacherTable';
 import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 import AddClassRoomModal from "./components/ClassRoom/AddClassRoomModal"
+import TeacherController from './components/Teacher/TeacherController';
 
 
 // Initialize Firebase
@@ -30,7 +31,7 @@ ReactDOM.render(
     <div>
       <NewHeader/>
       <Route exact path="/" component={Home} />
-      <Route path="/app" component={App} />
+      <Route path="/app" component={TeacherController} />
       <Route path="/classRoom" component={ClassRoomController} />
       <Route path="/about" component={AddClassRoomModal} />
     </div>
