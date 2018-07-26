@@ -11,6 +11,7 @@ class Home extends Component {
         return (
 
             <div>
+                <NewHeader/>
                 <Jumbotron bsClass = "body">
                 <h1>Xin chào</h1>
                 <p>Trang web này dùng để quản lý giảng viên và lớp học tại EDUMET</p>

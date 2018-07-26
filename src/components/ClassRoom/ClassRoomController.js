@@ -8,6 +8,7 @@ import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from '../Teacher/AddTeacherModal';
 import ClassRoomTable from './ClassRoomTable';
 import AddClassRoomModal from './AddClassRoomModal';
+import NewHeader from "../Header/NewHeader"
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
 
@@ -55,7 +56,7 @@ class ClassRoomController extends Component {
   render() {
     return (
       <div>
-          
+          <NewHeader/>
         <form className="App">
 
           <p className="App-intro">

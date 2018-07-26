@@ -7,6 +7,7 @@ import { Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap"
 import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from './AddTeacherModal';
 import TeacherTable from './TeacherTable';
+import NewHeader from "../Header/NewHeader"
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
 
@@ -55,7 +56,7 @@ class TeacherController extends Component {
   render() {
     return (
       <div>
-      
+        <NewHeader/>
         <form className="App">
 
           <p className="App-intro">
