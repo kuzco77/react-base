@@ -12,6 +12,7 @@ import TeacherTable from './components/Teacher/TeacherTable';
 import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 import AddClassRoomModal from "./components/ClassRoom/AddClassRoomModal"
 import TeacherController from './components/Teacher/TeacherController';
+import history from "history"
 
 
 // Initialize Firebase
@@ -27,16 +28,13 @@ firebase.initializeApp(config);
 
 
 ReactDOM.render(
-  <BrowserRouter basename="react-base">
+  <BrowserRouter basename={`${process.env.PUBLIC_URL}/`}>
     <Switch>
-    <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
+      {/* <ClassRoomController/> */}
+      <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
       <Route path={`${process.env.PUBLIC_URL}/app`} component={TeacherController} />
       <Route path={`${process.env.PUBLIC_URL}/classRoom`} component={ClassRoomController} />
-      <Route path="/about" component={AddClassRoomModal} />
     </Switch>
-      
-      
-    
   </BrowserRouter>,
   document.getElementById('root'));
 registerServiceWorker();
