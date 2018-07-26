@@ -14,9 +14,9 @@ class NewHeader extends Component {
         </div>
         
         <ul id="menu">
-          <li><a href="/"><span>Home </span></a></li>
-          <li><a href="/app"><span>Teacher</span></a></li>
-          <li><a href="/classRoom"><span>Class</span></a></li>
+          <li><a href={`${process.env.PUBLIC_URL}/`}><span>Home </span></a></li>
+          <li><a href={`${process.env.PUBLIC_URL}/app`}><span>Teacher</span></a></li>
+          <li><a href={`${process.env.PUBLIC_URL}/classRoom`}><span>Class</span></a></li>
           <li><a href="/about"><span>About us</span></a></li>
           <li><a href="/contact"><span>Contact</span></a></li>
         </ul>

@@ -27,12 +27,12 @@ firebase.initializeApp(config);
 
 
 ReactDOM.render(
-  <BrowserRouter >
+  <BrowserRouter basename="react-base">
     <div>
       <NewHeader/>
-      <Route exact path="/" component={Home} />
-      <Route path="/app" component={TeacherController} />
-      <Route path="/classRoom" component={ClassRoomController} />
+      <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
+      <Route path={`${process.env.PUBLIC_URL}/app`} component={TeacherController} />
+      <Route path={`${process.env.PUBLIC_URL}/classRoom`} component={ClassRoomController} />
       <Route path="/about" component={AddClassRoomModal} />
     </div>
   </BrowserRouter>,
