@@ -46,7 +46,7 @@ body {
 }
 #menu li {
   display: inline-block;
-  width: 173px;
+  width: 17%;
   margin: 0 10px;
   position: relative;
   -webkit-transform: skewy(-3deg);
@@ -61,7 +61,7 @@ body {
   background: #FFF;
   padding: 2px 10px;
   color: #333;
-  font-size: 35px;
+  font-size: 28px;
   text-align: center;
   text-decoration: none;
   position: relative;
