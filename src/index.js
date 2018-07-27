@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
-import Home from "./components/Home"
 import Profile from "./components/Profile"
 import registerServiceWorker from './registerServiceWorker';
 import * as firebase from "firebase"
@@ -12,6 +11,7 @@ import TeacherTable from './components/Teacher/TeacherTable';
 import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 import AddClassRoomModal from "./components/ClassRoom/AddClassRoomModal"
 import TeacherController from './components/Teacher/TeacherController';
+import HomeController from "./components/Home/HomeController"
 import history from "history"
 
 
@@ -28,13 +28,13 @@ firebase.initializeApp(config);
 
 
 ReactDOM.render(
-  <BrowserRouter basename={`${process.env.PUBLIC_URL}/`}>
-    <Switch>
-      {/* <ClassRoomController/> */}
-      <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home} />
-      <Route path={`${process.env.PUBLIC_URL}/app`} component={TeacherController} />
+  <BrowserRouter >
+    <div>
+      <NewHeader/>
+      <Route exact path={`${process.env.PUBLIC_URL}/`} component={HomeController} />
+      <Route path={`${process.env.PUBLIC_URL}/teacher`} component={TeacherController} />
       <Route path={`${process.env.PUBLIC_URL}/classRoom`} component={ClassRoomController} />
-    </Switch>
+    </div>
   </BrowserRouter>,
   document.getElementById('root'));
 registerServiceWorker();

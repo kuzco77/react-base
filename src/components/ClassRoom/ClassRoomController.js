@@ -10,7 +10,7 @@ import ClassRoomTable from './ClassRoomTable';
 import AddClassRoomModal from './AddClassRoomModal';
 import NewHeader from "../Header/NewHeader"
 
-const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
+const tooltip = <Tooltip id="modal-tooltip">Thêm Lớp Học</Tooltip>;
 
 class ClassRoomController extends Component {
 
@@ -56,16 +56,15 @@ class ClassRoomController extends Component {
   render() {
     return (
       <div>
-          <NewHeader/>
+          {/* <NewHeader/> */}
         <form className="App">
 
           <p className="App-intro">
-            Tìm kiếm theo mã giảng viên
+            (Nhấp đúp vào ô muốn chỉnh sửa)
           </p>
 
-          <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
+            <Button style={{width: "100px"}} bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
           </OverlayTrigger>
 
           <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />

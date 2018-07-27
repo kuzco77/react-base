@@ -113,7 +113,7 @@ class TeacherTable extends Component {
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div style={{ margin: "auto auto" }}>
-            <Button bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
+            <Button style={{marginTop: "50%"}} bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
             <DeleteTeacherModal
                 show={this.state.showDeleteTeacherModal}
                 onHide={this.onHideDeleteTeacherModal}

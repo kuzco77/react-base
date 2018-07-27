@@ -56,16 +56,16 @@ class TeacherController extends Component {
   render() {
     return (
       <div>
-        <NewHeader/>
+        {/* <NewHeader/> */}
         <form className="App">
 
           <p className="App-intro">
-            Tìm kiếm theo mã giảng viên
+            Nhấp đúp vào ô muốn chỉnh sửa
           </p>
 
-          <input placeholder="Nhập ID giảng viên" value={this.state.teacherID || ""} onChange={this.handleIDTF} />
+          
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
+            <Button style={{width: "100px", marginRight: "10px"}} bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
           </OverlayTrigger>
 
           <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />

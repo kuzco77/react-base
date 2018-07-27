@@ -14,11 +14,13 @@ class NewHeader extends Component {
         </div>
         
         <ul id="menu">
-          <li><a href={`${process.env.PUBLIC_URL}/`}><span>Home </span></a></li>
-          <li><a href={`${process.env.PUBLIC_URL}/app`}><span>Teacher</span></a></li>
-          <li><a href={`${process.env.PUBLIC_URL}/classRoom`}><span>Class</span></a></li>
-          <li><a href="/about"><span>About us</span></a></li>
-          <li><a href="/contact"><span>Contact</span></a></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/`}>Home</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/teacher`}>Teacher</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/classRoom`}>Class</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/about`}>About us</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/contact`}>Contact</Link></li>
+          
+
         </ul>
       </div>
       )
