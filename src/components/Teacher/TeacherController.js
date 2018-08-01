@@ -34,6 +34,26 @@ class TeacherController extends Component {
 
   componentDidMount() {
     document.title = "Giảng viên"
+
+    firebase.auth().onAuthStateChanged((user) => {
+
+      if (user) {
+          console.log("User is sign in")
+          // User is signed in.
+          this.setState({user})
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+          // ...
+      } else {
+          console.log("User is signed out")
+          this.setState({user: {}})
+      }
+  });
   }
 
   handleIDTF = (event) => {

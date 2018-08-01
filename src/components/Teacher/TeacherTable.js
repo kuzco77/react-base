@@ -15,6 +15,7 @@ class TeacherTable extends Component {
             isUploading: false,
             progress: 0,
             showDeleteTeacherModal: false,
+            idTeacherOfDeleteModal: ""
         }
 
         this.state.products = [];
