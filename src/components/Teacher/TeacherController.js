@@ -80,7 +80,7 @@ class TeacherController extends Component {
         <form className="App">
 
           <p className="App-intro">
-            Nhấp đúp vào ô muốn chỉnh sửa
+            Nhấp đúp vào ô muốn chỉnh sửa . Is signedIn {this.state.user != 0}
           </p>
 
           
@@ -90,7 +90,7 @@ class TeacherController extends Component {
 
           <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />
 
-          <TeacherTable searchTeacherID={this.state.searchTeacherID}/>
+          <TeacherTable searchTeacherID={this.state.searchTeacherID} isSignedIn={(this.state.user != null)}/>
 
         </form>
       </div>

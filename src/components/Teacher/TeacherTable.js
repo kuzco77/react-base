@@ -8,8 +8,8 @@ import PropType from "prop-types"
 import DeleteTeacherModal from './DeleteTeacherModal';
 
 class TeacherTable extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
             teacherID: "",
             isUploading: false,
@@ -79,6 +79,9 @@ class TeacherTable extends Component {
             value.editor = {
                 type: "textarea",
             }
+
+            value.editable = !(index === 4 || index === 5) && this.props.isSignedIn
+
         })
 
         this.state.columns = columns
@@ -168,21 +171,6 @@ class TeacherTable extends Component {
             this.setState({ products: newProducts })
         })
 
-        // const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("phoneNumber").equalTo("01696182359")
-
-        // teacherInListClassRef.once("value", (snaps) => {
-
-        //     console.log("Snapsu la",snaps.val())
-        //     var TT = {}
-        //     snaps.forEach((snap) => {
-        //         console.log("Snap/teacher la", snap.child("teacher").val())
-        //         TT = snap.child("teacher").val()
-        //     })
-
-        //     firebase.database().ref().child("ListTeacher").child("TT").set(TT)
-
-        // })
-
     }
 
     onHideDeleteTeacherModal = (event) => {
@@ -240,5 +228,6 @@ class TeacherTable extends Component {
 export default TeacherTable;
 
 TeacherTable.propTypes = {
-    searchTeacherID: PropType.string
+    searchTeacherID: PropType.string,
+    isSignedIn: PropType.bool.isRequired
 }
