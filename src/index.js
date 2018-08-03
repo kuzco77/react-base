@@ -14,7 +14,6 @@ import TeacherController from './components/Teacher/TeacherController';
 import HomeController from "./components/Home/HomeController"
 import history from "history"
 
-
 // Initialize Firebase
 var config = {
   apiKey: "AIzaSyDJYMcEDn7nh-zEl9J0_zSes8vMmyllGbM",
@@ -23,7 +22,8 @@ var config = {
   projectId: "react-base-6ef41",
   storageBucket: "react-base-6ef41.appspot.com",
   messagingSenderId: "534609096757"
-};
+}
+
 firebase.initializeApp(config);
 
 

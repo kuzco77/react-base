@@ -91,16 +91,7 @@ class HomeController extends Component {
           });
     }
 
-    render() {
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-        }
-        
-
+    render() {        
         return (
             <div className="App">
                 {/* <NewHeader/> */}
@@ -109,9 +100,6 @@ class HomeController extends Component {
                     <p>Trang web này dùng để quản lý giảng viên và lớp học tại EDUMET</p>
                     <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
-                    <div className="g-signin2" data-onsuccess="onSignIn"></div>
-
-
                 </Jumbotron>
             </div>
 
