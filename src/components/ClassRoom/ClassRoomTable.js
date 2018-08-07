@@ -27,51 +27,41 @@ class ClassRoomTable extends Component {
             headerStyle: {
                 width: "10%",
                 
-                textAlign: "center",
             }
         }, {
             dataField: "grade",
             text: "Lớp",
             headerStyle: {
                 width: "5%",
-                textAlign: "center",
             }
         }, {
             dataField: "subject",
             text: "Môn học",
             headerStyle: {
                 width: "7%",
-                textAlign: "center",
             }
         }, {
             dataField: "time",
             text: "Thời gian",
             headerStyle: {
                 width: "7%",
-                textAlign: "center",
             }
         }, {
             dataField: "introClass1",
             text: "Giới thiệu 1",
             headerStyle: {
                 width: "20%",
-                textAlign: "center",
             },
-            // formatter: this.achievementFormatter
+
         }, {
             dataField: "introClass2",
             text: "Giới thiệu 2",
             headerStyle: {
-                textAlign: "center",
-            },
-            editor: {
-                type: "textarea",
-
             },
             editorStyle: {
                 height: "120px"
             },
-            // formatter: this.achievementFormatter
+
         }, {
             dataField: "teacher.linkAvatar",
             text: "Người dạy",
@@ -79,14 +69,12 @@ class ClassRoomTable extends Component {
             editable: false,
             headerStyle: {
                 width: "12%",
-                textAlign: "center",
             }
         }, {
             dataField: "phoneNumber",
             text: "Số điện thoại",
             headerStyle: {
                 width: "10%",
-                textAlign: "center",
             },
         }, {
             dataField: "Action",
@@ -95,7 +83,6 @@ class ClassRoomTable extends Component {
             editable: false,
             headerStyle: {
                 width: "7%",
-                textAlign: "center",
             },
         }];
 
@@ -104,6 +91,7 @@ class ClassRoomTable extends Component {
             value.editor = {
                 type: "textarea",
             }
+            Object.assign(value.headerStyle, {textAlign: "center"})
         })
 
         this.state.columns = columns

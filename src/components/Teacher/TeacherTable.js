@@ -43,9 +43,7 @@ class TeacherTable extends Component {
         }, {
             dataField: "achievement",
             text: "Thành Tựu",
-            headerStyle: {
-                textAlign: "center",
-            },
+            headerStyle : {},
             editor: {
                 type: "textarea",
 
@@ -61,7 +59,6 @@ class TeacherTable extends Component {
             editable: false,
             headerStyle: {
                 width: "12%",
-                textAlign: "center",
             }
         }, {
             dataField: "Action",
@@ -70,7 +67,6 @@ class TeacherTable extends Component {
             editable: false,
             headerStyle: {
                 width: "7%",
-                textAlign: "center",
             },
         }];
 
@@ -80,7 +76,12 @@ class TeacherTable extends Component {
                 type: "textarea",
             }
 
-            value.editable = !(index === 4 || index === 5) && this.props.isSignedIn
+            Object.assign(value.headerStyle, {textAlign: "center"})
+            if (value.headerStyle !== null) {
+                console.log("cot ", value.text)
+                
+            }
+            // value.editable = !(index === 4 || index === 5) && this.props.isSignedIn
 
         })
 

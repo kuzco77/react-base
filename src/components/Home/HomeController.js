@@ -91,12 +91,14 @@ class HomeController extends Component {
           });
     }
 
-    render() {        
+    render() {
+        var displayName = this.state.user.displayName
+        var welcomeTitle = displayName ? ("Xin chao, " + displayName) : "Xin vui long dang nhap truoc khi su dung"
         return (
             <div className="App">
                 {/* <NewHeader/> */}
                 <Jumbotron style={{ marginTop: "12.5%" }} bsClass="body">
-                    <h1>Xin chào,{this.state.user.email || ""} userID: {this.state.user.uid}</h1>
+                    <h1>{welcomeTitle}</h1>
                     <p>Trang web này dùng để quản lý giảng viên và lớp học tại EDUMET</p>
                     <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
