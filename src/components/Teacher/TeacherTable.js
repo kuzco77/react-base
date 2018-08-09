@@ -43,7 +43,7 @@ class TeacherTable extends Component {
         }, {
             dataField: "achievement",
             text: "Thành Tựu",
-            headerStyle : {},
+            headerStyle: {},
             editor: {
                 type: "textarea",
 
@@ -56,7 +56,6 @@ class TeacherTable extends Component {
             dataField: "linkAvatar",
             text: "Avatar",
             formatter: this.avatarFormater,
-            editable: false,
             headerStyle: {
                 width: "12%",
             }
@@ -64,7 +63,6 @@ class TeacherTable extends Component {
             dataField: "Action",
             text: "Action",
             formatter: this.actionFormater,
-            editable: false,
             headerStyle: {
                 width: "7%",
             },
@@ -77,11 +75,8 @@ class TeacherTable extends Component {
             }
 
             Object.assign(value.headerStyle, {textAlign: "center"})
-            if (value.headerStyle !== null) {
-                console.log("cot ", value.text)
-                
-            }
-            // value.editable = !(index === 4 || index === 5) && this.props.isSignedIn
+            console.log("User da sign in chua: " + this.props.isSignedIn ? "Roi" : "Chua")
+            value.push = {editable: !(index === 4 || index === 5) && this.props.isSignedIn} 
 
         })
 

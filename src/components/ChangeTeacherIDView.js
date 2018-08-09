@@ -9,10 +9,12 @@ class ChangeTeacherIDView extends Component {
         this.state = {
             oldTeacherID: "",
             newTeacherID: "",
+            nameBeforeChange: "",
+            nameAfterChange: "",
         }
     }
 
-    handleTextField = event => {
+    onChangeTF = event => {
         this.setState({
             [event.target.id]: event.target.value
         })
@@ -26,42 +28,64 @@ class ChangeTeacherIDView extends Component {
 
             // Thêm dữ liệu mới vào listTeacher
             console.log(newTeacher, this.changeAlias(newTeacher.name))
-            listTeacher.set(newTeacher)
+            listTeacher.child(newTeacher.idTeacher).set(newTeacher)
             // Xóa dữ liệu cũ ở listTeacher
             snap.ref.remove()
 
-            // Thêm dữ liệu mới vào listClass
-            teacherInListClass.set(newTeacher)
-            snap.ref.remove
-
-            // Xóa dữ liệu cũ ở listClass
-
-            const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(this.state.oldTeacherID)
-            const teacherRefsThatNeedToChange = []
-            teacherInListClassRef.once("value", (snaps) => {
+            // Update dữ liệu mới vào listClass
+            teacherInListClass.once("value", (snaps) => {
                 snaps.forEach((snap) => {
-                    // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-                    snap.ref.child("teacher").set(newTeacher, (error) => {
-                        if (error) {
-                            console.log("Co loi khi cap nhat thong tin giao vien")
-                        } else {
-                            console.log("Cap nhat thong tin giao vien thanh cong")
-                        }
-                    })
+                    snap.ref.child("teacher").set(newTeacher)
                 })
-
             })
-
 
         })
 
-        // const speedmotRef = firebase.database().ref("react/speedmot").orderByChild("id").equalTo("speed1")
-        // speedmotRef.set({
-        //     id: "speed1",
-        //     name: "Da thay doi"
-        // })
+    }
 
+    checkFirebaseIDCB = (id) => {
 
+    }
+
+    convertNameToID = function(oldName, callback) {
+        // Convert nhu binh thuong
+        var aliasString = this.changeAlias(oldName)
+        var hoVaTenArray = aliasString.split(" ")
+        var ketqua = hoVaTenArray.pop()
+        const hoVaTenDemArray = hoVaTenArray
+        hoVaTenDemArray.forEach((word) => {
+            ketqua += word.charAt(0)
+        })
+
+        console.log("Ket qua vua moi ra lo: " + ketqua)
+        // ketqua += "1"
+
+        // Check xem firebase da co chua
+        const teacherRef = firebase.database().ref("ListTeacher").child("anhnd")
+        teacherRef.once("value", (snap) => {
+            console.log("In side firebase:" + snap.child("name").val())
+            // if(callback) callback(() => snap.child("name").val()) 
+             if(callback) {callback("Hellow") } else {
+                 console.log("Khong goi duoc call back")
+             }
+
+            
+        })
+        
+    }
+
+    handleChangeNameToID = (event) => {
+        this.onChangeTF(event)
+        this.convertNameToID(event.target.value, result => {
+            console.log("Result is" + result)
+            this.setState({nameAfterChange: result})
+        })
+    }
+
+    handleConvertButton = (event) => {
+        this.setState({
+            nameAfterChange: this.convertNameToID(this.state.nameBeforeChange)
+        })
     }
 
     changeAlias = (alias) => {
@@ -83,9 +107,14 @@ class ChangeTeacherIDView extends Component {
     render() {
         return (
             <div>
-                <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.handleTextField} />
-                <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.handleTextField} />
-                <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button>
+                <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
+                <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
+                <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button><br/>
+                <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF}/>
+                <Button bsStyle="success" onClick={this.handleConvertButton}>Convert</Button>
+                <p>{this.state.nameAfterChange}</p>
+
+
             </div>
         )
     }
