@@ -167,9 +167,6 @@ class ClassRoomTable extends Component {
         this.setState({ showDeleteTeacherModal: false })
     }
 
-
-
-
     handleShowDeleteModal = (row, event) => {
         this.setState({ showDeleteTeacherModal: true })
     }
@@ -178,8 +175,6 @@ class ClassRoomTable extends Component {
         const classIDRef = firebase.database().ref().child("ListClass").child(row.idClass)
         classIDRef.set(row)
     }
-
-   
 
     render() {
         return (

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from "firebase"
 import { Button } from "react-bootstrap"
 import PropType from "prop-types"
+import { isNull } from 'util';
 
 class ChangeTeacherIDView extends Component {
     constructor(props) {
@@ -12,9 +13,54 @@ class ChangeTeacherIDView extends Component {
             nameBeforeChange: "",
             nameAfterChange: "",
         }
+
+        // this.changeAllToRightID()
     }
 
-    onChangeTF = event => {
+    
+
+    // 2 Hàm bên dưới phải đi cùng nhau
+    changeAllToRightID = () => {
+        // Đổi tên trước khi dùng hàm này
+        const listTeacher = firebase.database().ref("ListTeacher")
+
+        listTeacher.once("value", (snaps) => {
+            snaps.forEach((snap) => {
+
+                const idTeacher = snap.child("idTeacher").val()
+                this.changeIDTeacherToTheRightID(idTeacher)
+            })
+        })  
+    }
+
+    changeIDTeacherToTheRightID = (oldID) => {
+        const listTeacher = firebase.database().ref("ListTeacher")
+        const teacherInListClass = firebase.database().ref("ListClass").orderByChild("teacher/idTeacher").equalTo(oldID)
+        listTeacher.child(oldID).once("value", (snap) => {
+
+            this.convertNameToID(snap.child("name").val(), (result) => {
+                const newTeacher = Object.assign({}, snap.val(), { idTeacher: result })
+
+                // Thêm dữ liệu mới vào listTeacher
+                console.log(newTeacher, this.changeAlias(newTeacher.name))
+                listTeacher.child(newTeacher.idTeacher).set(newTeacher)
+                // Xóa dữ liệu cũ ở listTeacher
+                snap.ref.remove()
+
+                // Update dữ liệu mới vào listClass
+                teacherInListClass.once("value", (snaps) => {
+                    snaps.forEach((snap) => {
+                        snap.ref.child("teacher").set(newTeacher)
+                    })
+                })
+            })
+
+
+
+        })
+    }
+
+    onChangeTF = (event) => {
         this.setState({
             [event.target.id]: event.target.value
         })
@@ -24,20 +70,25 @@ class ChangeTeacherIDView extends Component {
         const listTeacher = firebase.database().ref("ListTeacher")
         const teacherInListClass = firebase.database().ref("ListClass").orderByChild("teacher/idTeacher").equalTo(this.state.oldTeacherID)
         listTeacher.child(this.state.oldTeacherID).once("value", (snap) => {
-            const newTeacher = Object.assign({}, snap.val(), { idTeacher: this.state.newTeacherID })
 
-            // Thêm dữ liệu mới vào listTeacher
-            console.log(newTeacher, this.changeAlias(newTeacher.name))
-            listTeacher.child(newTeacher.idTeacher).set(newTeacher)
-            // Xóa dữ liệu cũ ở listTeacher
-            snap.ref.remove()
+            this.convertNameToID(snap.child("name").val(), (result) => {
+                const newTeacher = Object.assign({}, snap.val(), { idTeacher: result })
 
-            // Update dữ liệu mới vào listClass
-            teacherInListClass.once("value", (snaps) => {
-                snaps.forEach((snap) => {
-                    snap.ref.child("teacher").set(newTeacher)
+                // Thêm dữ liệu mới vào listTeacher
+                console.log(newTeacher, this.changeAlias(newTeacher.name))
+                listTeacher.child(newTeacher.idTeacher).set(newTeacher)
+                // Xóa dữ liệu cũ ở listTeacher
+                snap.ref.remove()
+
+                // Update dữ liệu mới vào listClass
+                teacherInListClass.once("value", (snaps) => {
+                    snaps.forEach((snap) => {
+                        snap.ref.child("teacher").set(newTeacher)
+                    })
                 })
             })
+
+
 
         })
 
@@ -47,7 +98,7 @@ class ChangeTeacherIDView extends Component {
 
     }
 
-    convertNameToID = function(oldName, callback) {
+    convertNameToID = (oldName, callback) => {
         // Convert nhu binh thuong
         var aliasString = this.changeAlias(oldName)
         var hoVaTenArray = aliasString.split(" ")
@@ -58,33 +109,36 @@ class ChangeTeacherIDView extends Component {
         })
 
         console.log("Ket qua vua moi ra lo: " + ketqua)
-        // ketqua += "1"
+        const teacherRef = firebase.database().ref("ListTeacher").orderByKey().startAt(ketqua).endAt(ketqua + '\uf8ff').limitToLast(1)
+        teacherRef.once("value", (snaps) => {
 
-        // Check xem firebase da co chua
-        const teacherRef = firebase.database().ref("ListTeacher").child("anhnd")
-        teacherRef.once("value", (snap) => {
-            console.log("In side firebase:" + snap.child("name").val())
-            // if(callback) callback(() => snap.child("name").val()) 
-             if(callback) {callback("Hellow") } else {
-                 console.log("Khong goi duoc call back")
-             }
 
-            
-        })
-        
-    }
+            if (snaps.val() === null) {
+                if (typeof callback === "function") callback(ketqua + "1")
+                console.log("Ket qua cuoi cung: " + ketqua + "1")
+            } else {
+                snaps.forEach((snap) => {
+                    var lastIDTeacher = snap.val().idTeacher
+                    const number = lastIDTeacher.slice(ketqua.length, ketqua.length + 1)
+                    const ketquaCuoiCung = ketqua + (Number(number) + 1).toString()
+                    console.log(typeof callback)
+                    if (typeof callback === "function") callback(ketquaCuoiCung)
+                    console.log("Ket qua cuoi cung: " + ketquaCuoiCung)
+                })
+            }
 
-    handleChangeNameToID = (event) => {
-        this.onChangeTF(event)
-        this.convertNameToID(event.target.value, result => {
-            console.log("Result is" + result)
-            this.setState({nameAfterChange: result})
-        })
+        }
+
+
+
+
+        )
+
     }
 
     handleConvertButton = (event) => {
-        this.setState({
-            nameAfterChange: this.convertNameToID(this.state.nameBeforeChange)
+        this.convertNameToID(this.state.nameBeforeChange, (result) => {
+            this.setState({ nameAfterChange: result })
         })
     }
 
@@ -109,9 +163,10 @@ class ChangeTeacherIDView extends Component {
             <div>
                 <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
                 <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
-                <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button><br/>
-                <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF}/>
+                <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button><br />
+                <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
                 <Button bsStyle="success" onClick={this.handleConvertButton}>Convert</Button>
+                <Button bsStyle="success" onClick={this.changeAllToRightID}>Change All To Right ID</Button>
                 <p>{this.state.nameAfterChange}</p>
 
 

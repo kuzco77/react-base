@@ -22,6 +22,7 @@ class TeacherController extends Component {
       isUploading: false,
       progress: 0,
       showAddTeacherModal: false,
+      searchTeacherID: "",
     }
   }
 
@@ -89,7 +90,6 @@ class TeacherController extends Component {
           </OverlayTrigger>
 
           <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />
-
           <TeacherTable searchTeacherID={this.state.searchTeacherID} isSignedIn={(this.state.user != null)}/>
 
         </form>
