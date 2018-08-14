@@ -13,11 +13,15 @@ class ChangeTeacherIDView extends Component {
             nameBeforeChange: "",
             nameAfterChange: "",
         }
-
-        // this.changeAllToRightID()
     }
 
-    
+    findSmallestMissingNumberFromSortedArray = (array) => {
+        var index = 1
+        while (index === array.shift()) {
+            index += 1
+        }
+        return index
+    }
 
     // 2 Hàm bên dưới phải đi cùng nhau
     changeAllToRightID = () => {
@@ -30,7 +34,7 @@ class ChangeTeacherIDView extends Component {
                 const idTeacher = snap.child("idTeacher").val()
                 this.changeIDTeacherToTheRightID(idTeacher)
             })
-        })  
+        })
     }
 
     changeIDTeacherToTheRightID = (oldID) => {
@@ -94,10 +98,6 @@ class ChangeTeacherIDView extends Component {
 
     }
 
-    checkFirebaseIDCB = (id) => {
-
-    }
-
     convertNameToID = (oldName, callback) => {
         // Convert nhu binh thuong
         var aliasString = this.changeAlias(oldName)
@@ -109,31 +109,29 @@ class ChangeTeacherIDView extends Component {
         })
 
         console.log("Ket qua vua moi ra lo: " + ketqua)
-        const teacherRef = firebase.database().ref("ListTeacher").orderByKey().startAt(ketqua).endAt(ketqua + '\uf8ff').limitToLast(1)
+
+
+        const teacherRef = firebase.database().ref("ListTeacher").orderByKey().startAt(ketqua).endAt(ketqua + '\uf8ff')
         teacherRef.once("value", (snaps) => {
-
-
-            if (snaps.val() === null) {
+            if (!snaps.exists()) {
                 if (typeof callback === "function") callback(ketqua + "1")
-                console.log("Ket qua cuoi cung: " + ketqua + "1")
             } else {
-                snaps.forEach((snap) => {
+                var allTeacherIDNumber = []
+                snaps.forEach((snap) => {                  
                     var lastIDTeacher = snap.val().idTeacher
-                    const number = lastIDTeacher.slice(ketqua.length, ketqua.length + 1)
-                    const ketquaCuoiCung = ketqua + (Number(number) + 1).toString()
-                    console.log(typeof callback)
-                    if (typeof callback === "function") callback(ketquaCuoiCung)
-                    console.log("Ket qua cuoi cung: " + ketquaCuoiCung)
+                    const number = Number(lastIDTeacher.slice(ketqua.length, ketqua.length + 1))
+                    allTeacherIDNumber.push(number)
+
+                    if (allTeacherIDNumber.length >= snaps.numChildren()) {
+                        const rightNumber = this.findSmallestMissingNumberFromSortedArray(allTeacherIDNumber)
+                        if (typeof callback === "function") callback(ketqua + String(rightNumber))
+                    }
                 })
             }
 
         }
 
-
-
-
         )
-
     }
 
     handleConvertButton = (event) => {
@@ -158,18 +156,16 @@ class ChangeTeacherIDView extends Component {
         return str;
     }
 
-    render() {
+    render = () => {
         return (
             <div>
                 <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
                 <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
                 <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button><br />
                 <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
-                <Button bsStyle="success" onClick={this.handleConvertButton}>Convert</Button>
+                <Button bsStyle="success" onClick={this.handleConvertButton}>Convert</Button><br/>
                 <Button bsStyle="success" onClick={this.changeAllToRightID}>Change All To Right ID</Button>
                 <p>{this.state.nameAfterChange}</p>
-
-
             </div>
         )
     }

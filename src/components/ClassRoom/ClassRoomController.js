@@ -23,6 +23,7 @@ class ClassRoomController extends Component {
       isUploading: false,
       progress: 0,
       showAddClassModal: false,
+      searchTeacherID: "",
     }
   }
 

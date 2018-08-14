@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Jumbotron, Button } from "react-bootstrap"
 import firebase from "firebase"
 import ChangeTeacherIDView from '../ChangeTeacherIDView';
+import ChangeClassIDView from '../ChangeClassIDView';
 
 class HomeController extends Component {
     constructor() {
@@ -109,6 +110,7 @@ class HomeController extends Component {
                     <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
                     <ChangeTeacherIDView/>
+                    <ChangeClassIDView/>
                 </Jumbotron>
             </div>
 

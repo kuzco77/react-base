@@ -75,7 +75,6 @@ class TeacherTable extends Component {
             }
 
             Object.assign(value.headerStyle, {textAlign: "center"})
-            console.log("User da sign in chua: " + this.props.isSignedIn ? "Roi" : "Chua")
             value.push = {editable: !(index === 4 || index === 5) && this.props.isSignedIn} 
 
         })
