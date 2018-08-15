@@ -47,6 +47,12 @@ class ClassRoomTable extends Component {
                 width: "7%",
             }
         }, {
+            dataField: "major",
+            text: "Chuyên đề",
+            headerStyle: {
+                width: "7%",
+            }
+        },{
             dataField: "introClass1",
             text: "Giới thiệu 1",
             headerStyle: {

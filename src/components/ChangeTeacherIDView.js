@@ -156,15 +156,40 @@ class ChangeTeacherIDView extends Component {
         return str;
     }
 
+    addPhoneToTeacher = () => {
+        const listTeacher = firebase.database().ref("ListTeacher")
+
+        listTeacher.once("value", (snaps) => {
+            var allTeacher = snaps.val()
+            var index = 0 
+            snaps.forEach((snap) => {
+                var oldTeacher = snap.val()
+                oldTeacher.phoneNumber = "098 605 8405"
+                allTeacher[oldTeacher.idTeacher] = oldTeacher
+
+                if (index >= (snaps.numChildren() -1)) {
+                    console.log("Them sdt vao nguoi day");
+                    listTeacher.set(allTeacher, (err) => {
+                        if (err) console.log(err.message);   
+                    })                  
+                }
+
+                index += 1
+            })
+        })
+    }
+
     render = () => {
         return (
             <div>
                 <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
                 <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
-                <Button bsStyle="success" onClick={this.changeTeacherID}>Thay đổi</Button><br />
+                <Button bsStyle="danger" onClick={this.changeTeacherID}>Thay đổi (Thử nghiệm)</Button><br />
                 <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
-                <Button bsStyle="success" onClick={this.handleConvertButton}>Convert</Button><br/>
-                <Button bsStyle="success" onClick={this.changeAllToRightID}>Change All To Right ID</Button>
+                <Button bsStyle="danger" onClick={this.handleConvertButton}>Convert (Thử nghiệm)</Button><br/>
+                <Button bsStyle="danger" onClick={this.changeAllToRightID}>Thay đổi tất cả id người dạy (Thử nghiệm)</Button><br/>
+                <Button bsStyle="danger" onClick={this.addPhoneToTeacher}>Thêm số điện thoại cho người dạy (Thử nghiệm)</Button><br/>
+
                 <p>{this.state.nameAfterChange}</p>
             </div>
         )
