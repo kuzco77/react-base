@@ -30,7 +30,6 @@ class ChangeTeacherIDView extends Component {
 
         listTeacher.once("value", (snaps) => {
             snaps.forEach((snap) => {
-
                 const idTeacher = snap.child("idTeacher").val()
                 this.changeIDTeacherToTheRightID(idTeacher)
             })
@@ -175,6 +174,37 @@ class ChangeTeacherIDView extends Component {
                 }
 
                 index += 1
+            })
+        })
+    }
+
+    changeAllIDTeacher = () => {
+        const listTeacherRef = firebase.database().ref("ListTeacher")
+        const listClassRef = firebase.database().ref("ListClass")
+
+        listTeacherRef.once("value", (snapsTeacher) => {
+            var allTeacher = snapsTeacher.val()
+            listClassRef.once("value", (snapsClass) => {
+                var allClass = snapsClass.val()
+                var index = 0
+                snapsTeacher.forEach((snapTeacher) => {
+                    var oldTeacher = snapTeacher.val()
+                    var oldTeacherID = oldTeacher.idTeacher
+                    this.convertNameToID(oldTeacher.name, (result) => {
+                        delete allTeacher[oldTeacherID]
+                        oldTeacher.idTeacher = result
+                        allTeacher[result] = oldTeacher
+                        snapsClass.once("value", (snapClass) => {
+                            var oldClass = snapClass.val()
+                            var teacherInOldClass = oldClass.teacher
+                            if (oldTeacherID === teacherInOldClass.idTeacher) {
+                                oldClass.teacher = oldTeacher
+                                allClass[oldClass.idClass] = oldClass
+                            }
+                            
+                        })
+                    })
+                })
             })
         })
     }

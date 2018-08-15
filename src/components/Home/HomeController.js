@@ -14,18 +14,6 @@ class HomeController extends Component {
 
     componentDidMount() {
         document.title = "Trang chủ"
-
-        // firebase.auth().createUserWithEmailAndPassword("namanh.chu2103@gmail.com", "123456").catch(function(error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-
-        //     console.log(errorMessage)
-        //     // ...
-        //   })
-
-
-
         firebase.auth().onAuthStateChanged((user) => {
 
             if (user) {
