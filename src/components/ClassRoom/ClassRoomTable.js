@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import * as firebase from "firebase"
 import BootstrapTable from "react-bootstrap-table-next"
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
-import { Button, Image, Well } from "react-bootstrap"
+import { Button, Image, ToggleButtonGroup, ToggleButton } from "react-bootstrap"
 import PropType from "prop-types"
 import DeleteClassRoomModal from "./DeleteClassRoomModal"
 import SelectTeacherForClassRoomModal from "./SelectTeacherForClassRoomModal"
+import { stat } from 'fs';
 
 class ClassRoomTable extends Component {
     constructor() {
@@ -18,6 +19,7 @@ class ClassRoomTable extends Component {
             showSelectTeacherModal: false,
             showDeleteTeacherModal: false,
             idClassOfSelectedTeacherModal: "",
+            isLoading: false,
         }
 
         this.state.products = [];
@@ -25,8 +27,8 @@ class ClassRoomTable extends Component {
             dataField: "idClass",
             text: "Mã Lớp Học",
             headerStyle: {
-                width: "10%",
-                
+                width: "7%",
+
             }
         }, {
             dataField: "grade",
@@ -52,7 +54,14 @@ class ClassRoomTable extends Component {
             headerStyle: {
                 width: "7%",
             }
-        },{
+        }, {
+            dataField: "level",
+            text: "Trình độ",
+            headerStyle: {
+                width: "7%",
+            },
+            formatter: this.levelFormatter,
+        }, {
             dataField: "introClass1",
             text: "Giới thiệu 1",
             headerStyle: {
@@ -97,13 +106,13 @@ class ClassRoomTable extends Component {
             value.editor = {
                 type: "textarea",
             }
-            Object.assign(value.headerStyle, {textAlign: "center"})
+            Object.assign(value.headerStyle, { textAlign: "center" })
         })
 
         this.state.columns = columns
     }
 
-    handleChangeBtn = (row, event) => {
+    handleChangeBtn = (row) => (event) => {
         console.log("Neu yeu thuong nguoi sau, thi xin em cx dung quen ten anh")
         this.setState({
             showSelectTeacherModal: true,
@@ -112,13 +121,14 @@ class ClassRoomTable extends Component {
     }
 
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
+        
         const teacher = row.teacher
         const nameTeacher = teacher.name
         return <div>
             <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
             <p>{nameTeacher}</p>
-            <Button style={{marginTop: "0px", marginBottom: "5px"}} bsStyle="info" onClick={this.handleChangeBtn.bind(this, row)}>
-            Thay doi
+            <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsStyle="info" onClick={this.handleChangeBtn(row)}>
+                Thay doi
             </Button>
             <SelectTeacherForClassRoomModal
                 show={this.state.showSelectTeacherModal}
@@ -128,8 +138,30 @@ class ClassRoomTable extends Component {
         </div>
     }
 
+    levelFormatter = (cell, row, rowIndex, formatExtraData) => {
+        const level = cell
+        return <div>
+            
+            <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
+                <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
+                <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
+            </ToggleButtonGroup>
+        </div>
+    }
+
+    onChangeToggleLevel = (row) => (event) => {
+        console.log(event.target.value)
+        this.setState({isLoading: true})
+        const classRef = firebase.database().ref("ListClass").child(row.idClass).update({level: event.target.value}, (err) => {
+            this.setState({isLoading: false})
+            if (err) {
+                console.log(err.message)
+            }
+        })
+    }
+
     onHideSelectTeacherModal = (event) => {
-        this.setState({showSelectTeacherModal: false})
+        this.setState({ showSelectTeacherModal: false })
     }
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {

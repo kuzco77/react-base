@@ -20,6 +20,8 @@ class AddClassRoomModal extends Component {
         this.state = {
             idClass: "",
             grade: "",
+            major: "Tổng hợp",
+            level: "1",
             introClass1: "",
             introClass2: "",
             phoneNumber: "",
@@ -49,6 +51,8 @@ class AddClassRoomModal extends Component {
         listClassRef.child(this.state.idClass).set({
             idClass: this.state.idClass,
             grade: this.state.grade,
+            major: this.state.major,
+            level: this.state.level,
             introClass1: this.state.introClass1,
             introClass2: this.state.introClass2,
             phoneNumber: this.state.phoneNumber,
@@ -103,6 +107,25 @@ class AddClassRoomModal extends Component {
                                 label="Lớp"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
+                            />
+
+                            <FieldGroup
+                                value={this.state.major}
+                                id="major"
+                                help="VD: - Tổng hợp"
+                                label="Chuyên đề"
+                                placeholder="Nhập vào đây"
+                                onChange={this.handleTextField}
+                            />
+
+                            <FieldGroup
+                                value={this.state.level}
+                                id="level"
+                                help="Tý chỉnh sau"
+                                label="Trình độ"
+                                placeholder="Khá"
+                                onChange={this.handleTextField}
+                                disabled = {true}
                             />
 
                             <FieldGroup

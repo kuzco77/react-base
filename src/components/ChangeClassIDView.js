@@ -82,8 +82,6 @@ class ChangeClassIDView extends Component {
             var allClass = snaps.val()
             var index = 0
             snaps.forEach((snap) => {
-                console.log("Vao list class, voi ten mon hoc: ", snap.child("subject").val())
-
                 const oldClass = snap.val()
                 oldClass.major = "Tổng hợp"
                 allClass[oldClass.idClass] = oldClass
@@ -99,8 +97,25 @@ class ChangeClassIDView extends Component {
         })
     }
 
-    addMajorToAllClass = () => {
-        
+    addLevelToAllClass = () => {
+        const listClass = firebase.database().ref("ListClass")
+        listClass.once("value", (snaps) => {
+            
+            var allClass = snaps.val()
+            var index = 0
+            snaps.forEach((snap) => {
+                const oldClass = snap.val()
+                oldClass.level = "1"
+                allClass[oldClass.idClass] = oldClass
+
+                if (index >= (snaps.numChildren() - 1)) {
+                    console.log("Co vao day ko")
+                    snaps.ref.update(allClass)
+                }
+
+                index += 1
+            })
+        })
     }
 
 
@@ -113,6 +128,7 @@ class ChangeClassIDView extends Component {
                     <Button bsStyle="danger" onClick={this.changeClassRoomID}>Thay đổi</Button><br/> 
                     <Button bsStyle="danger" onClick={this.changeAllSubjectName}>Thay đổi tên môn học sang EN (Thử nghiệm)</Button><br/> 
                     <Button bsStyle="danger" onClick={this.addMajorToAllClass}>Thêm chuyên đề cho lớp học(Thử nghiệm)</Button><br/>
+                    <Button bsStyle="danger" onClick={this.addLevelToAllClass}>Thêm trình độ cho lớp học(Thử nghiệm)</Button><br/>
                 </div>
             )
         } else {

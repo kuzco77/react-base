@@ -15,25 +15,25 @@ import HomeController from "./components/Home/HomeController"
 import history from "history"
 
 // // Initialize Firebase (react-base)
-var config = {
-  apiKey: "AIzaSyDJYMcEDn7nh-zEl9J0_zSes8vMmyllGbM",
-  authDomain: "react-base-6ef41.firebaseapp.com",
-  databaseURL: "https://react-base-6ef41.firebaseio.com",
-  projectId: "react-base-6ef41",
-  storageBucket: "react-base-6ef41.appspot.com",
-  messagingSenderId: "534609096757"
-}
+// var config = {
+//   apiKey: "AIzaSyDJYMcEDn7nh-zEl9J0_zSes8vMmyllGbM",
+//   authDomain: "react-base-6ef41.firebaseapp.com",
+//   databaseURL: "https://react-base-6ef41.firebaseio.com",
+//   projectId: "react-base-6ef41",
+//   storageBucket: "react-base-6ef41.appspot.com",
+//   messagingSenderId: "534609096757"
+// }
 
 // Initialize Firebase (Edumet)
 
-// var config = {
-//   apiKey: "AIzaSyBj1zc5aHUxutkkpikP1ZgZ-Ha1KSxeSzk",
-//   authDomain: "edumet-e5186.firebaseapp.com",
-//   databaseURL: "https://edumet-e5186.firebaseio.com",
-//   projectId: "edumet-e5186",
-//   storageBucket: "edumet-e5186.appspot.com",
-//   messagingSenderId: "617048274868"
-// }
+var config = {
+  apiKey: "AIzaSyBj1zc5aHUxutkkpikP1ZgZ-Ha1KSxeSzk",
+  authDomain: "edumet-e5186.firebaseapp.com",
+  databaseURL: "https://edumet-e5186.firebaseio.com",
+  projectId: "edumet-e5186",
+  storageBucket: "edumet-e5186.appspot.com",
+  messagingSenderId: "617048274868"
+}
 
 
 firebase.initializeApp(config);
