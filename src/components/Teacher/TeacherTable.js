@@ -191,48 +191,48 @@ class TeacherTable extends Component {
         const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
         teacherIDRef.set(row)
 
-        const listClassRef = firebase.database().ref("ListClass")
-        listClassRef.once("value", (snaps) => {
-            var allClass = snaps.val()
-            var index = 0 
-            snaps.forEach((snap) => {
-                var oldClass = snap.val()
-                var oldTeacher = oldClass.teacher
-                if (oldTeacher.idTeacher === row.idTeacher) {
-                    oldClass.teacher = row
-                    allClass[oldClass.idClass] = oldClass
-                }
+        // const listClassRef = firebase.database().ref("ListClass")
+        // listClassRef.once("value", (snaps) => {
+        //     var allClass = snaps.val()
+        //     var index = 0 
+        //     snaps.forEach((snap) => {
+        //         var oldClass = snap.val()
+        //         var oldTeacher = oldClass.teacher
+        //         if (oldTeacher.idTeacher === row.idTeacher) {
+        //             oldClass.teacher = row
+        //             allClass[oldClass.idClass] = oldClass
+        //         }
 
-                if (index >= snaps.numChildren() - 1) {
-                    console.log("Thay doi teacher trong list class")
-                    listClassRef.set(allClass, (err) => {
-                        if (err) {
-                            console.log(err.message);
+        //         if (index >= snaps.numChildren() - 1) {
+        //             console.log("Thay doi teacher trong list class")
+        //             listClassRef.update(allClass, (err) => {
+        //                 if (err) {
+        //                     console.log(err.message);
                             
-                        }
-                    })
-                }
+        //                 }
+        //             })
+        //         }
                 
-                index += 1
-            })
-        })
+        //         index += 1
+        //     })
+        // })
     
 
-        // const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
-        // const teacherRefsThatNeedToChange = []
-        // teacherInListClassRef.once("value", (snaps) => {
-        //     snaps.forEach((snap) => {
-        //         // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-        //         snap.ref.child("teacher").set(row, (error) => {
-        //             if (error) {
-        //                 console.log("Co loi khi cap nhat thong tin giao vien")
-        //             } else {
-        //                 console.log("Cap nhat thong tin giao vien thanh cong")
-        //             }
-        //         })
-        //     })
+        const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
+        const teacherRefsThatNeedToChange = []
+        teacherInListClassRef.once("value", (snaps) => {
+            snaps.forEach((snap) => {
+                // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
+                snap.ref.child("teacher").update(row, (error) => {
+                    if (error) {
+                        console.log("Co loi khi cap nhat thong tin giao vien")
+                    } else {
+                        console.log("Cap nhat thong tin giao vien thanh cong")
+                    }
+                })
+            })
 
-        // })
+        })
 
     }
 

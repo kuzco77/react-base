@@ -53,7 +53,7 @@ class ChangeTeacherIDView extends Component {
                 // Update dữ liệu mới vào listClass
                 teacherInListClass.once("value", (snaps) => {
                     snaps.forEach((snap) => {
-                        snap.ref.child("teacher").set(newTeacher)
+                        snap.ref.child("teacher").update(newTeacher)
                     })
                 })
             })
@@ -86,7 +86,7 @@ class ChangeTeacherIDView extends Component {
                 // Update dữ liệu mới vào listClass
                 teacherInListClass.once("value", (snaps) => {
                     snaps.forEach((snap) => {
-                        snap.ref.child("teacher").set(newTeacher)
+                        snap.ref.child("teacher").update(newTeacher)
                     })
                 })
             })
@@ -157,6 +157,7 @@ class ChangeTeacherIDView extends Component {
 
     addPhoneToTeacher = () => {
         const listTeacher = firebase.database().ref("ListTeacher")
+        
 
         listTeacher.once("value", (snaps) => {
             var allTeacher = snaps.val()
@@ -164,15 +165,14 @@ class ChangeTeacherIDView extends Component {
             snaps.forEach((snap) => {
                 var oldTeacher = snap.val()
                 oldTeacher.phoneNumber = "098 605 8405"
-                allTeacher[oldTeacher.idTeacher] = oldTeacher
+                allTeacher['${oldTeacher.idTeacher}'] = oldTeacher
 
                 if (index >= (snaps.numChildren() -1)) {
                     console.log("Them sdt vao nguoi day");
-                    listTeacher.set(allTeacher, (err) => {
+                    listTeacher.update(allTeacher, (err) => {
                         if (err) console.log(err.message);   
                     })                  
                 }
-
                 index += 1
             })
         })
@@ -210,25 +210,34 @@ class ChangeTeacherIDView extends Component {
     }
 
     render = () => {
-        return (
-            <div>
-                <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
-                <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
-                <Button bsStyle="danger" onClick={this.changeTeacherID}>Thay đổi (Thử nghiệm)</Button><br />
-                <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
-                <Button bsStyle="danger" onClick={this.handleConvertButton}>Convert (Thử nghiệm)</Button><br/>
-                <Button bsStyle="danger" onClick={this.changeAllToRightID}>Thay đổi tất cả id người dạy (Thử nghiệm)</Button><br/>
-                <Button bsStyle="danger" onClick={this.addPhoneToTeacher}>Thêm số điện thoại cho người dạy (Thử nghiệm)</Button><br/>
-
-                <p>{this.state.nameAfterChange}</p>
-            </div>
-        )
+        if (this.props.isSignedIn && this.props.isGod) {
+            return (
+                <div>
+                    <input id="oldTeacherID" placeholder="Mã người dạy cũ" value={this.state.oldTeacherID} onChange={this.onChangeTF} />
+                    <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
+                    <Button bsStyle="danger" onClick={this.changeTeacherID}>Thay đổi (Thử nghiệm)</Button><br />
+                    <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
+                    <Button bsStyle="danger" onClick={this.handleConvertButton}>Convert (Thử nghiệm)</Button><br/>
+                    <Button bsStyle="danger" onClick={this.changeAllToRightID}>Thay đổi tất cả id người dạy (Thử nghiệm)</Button><br/>
+                    <Button bsStyle="danger" onClick={this.addPhoneToTeacher}>Thêm số điện thoại cho người dạy (Thử nghiệm)</Button><br/>
+    
+                    <p>{this.state.nameAfterChange}</p>
+                </div>
+            )
+        } else {
+            return (
+                <div></div>
+            )
+        }
+        
     }
 }
 
 export default ChangeTeacherIDView
 
-// ChangeTeacherIDView.propTypes = {
-//     oldTeacherID: PropType.string.isRequired,
-//     newTeacherID: PropType.string.isRequired
-// }
+ChangeTeacherIDView.propTypes = {
+    // oldTeacherID: PropType.string.isRequired,
+    // newTeacherID: PropType.string.isRequired
+    isSignedIn: PropType.bool.isRequired,
+    isGod: PropType.bool.isRequired,
+}

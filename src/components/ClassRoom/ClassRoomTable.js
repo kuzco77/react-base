@@ -179,7 +179,7 @@ class ClassRoomTable extends Component {
 
     afterSaveCell(oldValue, newValue, row, column) {
         const classIDRef = firebase.database().ref().child("ListClass").child(row.idClass)
-        classIDRef.set(row)
+        classIDRef.update(row)
     }
 
     render() {

@@ -67,7 +67,7 @@ class ChangeClassIDView extends Component {
                 if (index >= (snaps.numChildren() - 1)) {
                     console.log("Co vao day ko");
                     
-                    snaps.ref.set(allClass)
+                    snaps.ref.update(allClass)
                 }
 
                 index += 1
@@ -91,7 +91,7 @@ class ChangeClassIDView extends Component {
                 if (index >= (snaps.numChildren() - 1)) {
                     console.log("Co vao day ko");
                     
-                    snaps.ref.set(allClass)
+                    snaps.ref.update(allClass)
                 }
 
                 index += 1
@@ -99,18 +99,35 @@ class ChangeClassIDView extends Component {
         })
     }
 
+    addMajorToAllClass = () => {
+        
+    }
+
 
     render = () => {
-        return(
-            <div>
-               <input id="oldClassRoomID" placeholder="Mã lớp học cũ" value={this.state.oldClassRoomID} onChange={this.onChangeTF} />
-                <input id="newClassRoomID" placeholder="Mã lớp học mới" value={this.state.newClassRoomID} onChange={this.onChangeTF} />
-                <Button bsStyle="danger" onClick={this.changeClassRoomID}>Thay đổi</Button><br/> 
-                <Button bsStyle="danger" onClick={this.changeAllSubjectName}>Thay đổi tên môn học sang EN (Thử nghiệm)</Button><br/> 
-                <Button bsStyle="danger" onClick={this.addMajorToAllClass}>Thêm chuyên đề cho lớp học(Thử nghiệm)</Button><br/>
-            </div>
-        )
+        if (this.props.isSignedIn && this.props.isGod) {
+            return(
+                <div>
+                   <input id="oldClassRoomID" placeholder="Mã lớp học cũ" value={this.state.oldClassRoomID} onChange={this.onChangeTF} />
+                    <input id="newClassRoomID" placeholder="Mã lớp học mới" value={this.state.newClassRoomID} onChange={this.onChangeTF} />
+                    <Button bsStyle="danger" onClick={this.changeClassRoomID}>Thay đổi</Button><br/> 
+                    <Button bsStyle="danger" onClick={this.changeAllSubjectName}>Thay đổi tên môn học sang EN (Thử nghiệm)</Button><br/> 
+                    <Button bsStyle="danger" onClick={this.addMajorToAllClass}>Thêm chuyên đề cho lớp học(Thử nghiệm)</Button><br/>
+                </div>
+            )
+        } else {
+            return(<div></div>)
+        }
+
+        
     }
 }
 
 export default ChangeClassIDView
+
+ChangeClassIDView.propTypes = {
+    // oldTeacherID: PropType.string.isRequired,
+    // newTeacherID: PropType.string.isRequired
+    isSignedIn: PropType.bool.isRequired,
+    isGod: PropType.bool.isRequired,
+}

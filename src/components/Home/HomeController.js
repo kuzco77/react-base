@@ -97,8 +97,8 @@ class HomeController extends Component {
                     <p>Trang web này dùng để quản lý người dạy và lớp học tại EDUMET</p>
                     <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
-                    <ChangeTeacherIDView/>
-                    <ChangeClassIDView/>
+                    <ChangeTeacherIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
+                    <ChangeClassIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
                 </Jumbotron>
             </div>
 
