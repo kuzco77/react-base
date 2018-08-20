@@ -5,7 +5,6 @@ import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import { Button, Image, Well } from "react-bootstrap"
 import FileUploader from "react-firebase-file-uploader";
 import PropType from "prop-types"
-import DeleteTeacherModal from './DeleteTeacherModal';
 
 class TeacherTable extends Component {
     constructor(props) {
@@ -24,21 +23,18 @@ class TeacherTable extends Component {
             text: "Mã Giáo Viên",
             headerStyle: {
                 width: "5%",
-                textAlign: "center",
-            }
+            },
         }, {
             dataField: "name",
             text: "Tên Giáo Viên",
             headerStyle: {
                 width: "7%",
-                textAlign: "center",
             }
         }, {
             dataField: "school",
             text: "Trường",
             headerStyle: {
                 width: "10%",
-                textAlign: "center",
             }
         }, {
             dataField: "achievement",
@@ -57,9 +53,8 @@ class TeacherTable extends Component {
             text: "Số Điện Thoại",
             headerStyle: {
                 width: "10%",
-                textAlign: "center",
             }
-        },{
+        }, {
             dataField: "linkAvatar",
             text: "Avatar",
             formatter: this.avatarFormater,
@@ -81,8 +76,8 @@ class TeacherTable extends Component {
                 type: "textarea",
             }
 
-            Object.assign(value.headerStyle, {textAlign: "center"})
-            value.push = {editable: !(index === 4 || index === 5) && this.props.isSignedIn} 
+            Object.assign(value.headerStyle, { textAlign: "center" })
+            value.editable = !(value.dataField === "linkAvatar" || value.dataField === "Action") && this.props.isSignedIn
 
         })
 
@@ -108,7 +103,7 @@ class TeacherTable extends Component {
                     storageRef={firebase.storage().ref('images')}
                     onUploadStart={this.handleUploadStart}
                     onUploadError={this.handleUploadError}
-                    onUploadSuccess={this.handleUploadSuccess.bind(this, row)}
+                    onUploadSuccess={this.handleUploadSuccess(row)}
                     onProgress={this.handleProgress}
                     maxHeight={400}
                     maxWidth={400}
@@ -119,12 +114,7 @@ class TeacherTable extends Component {
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div style={{ margin: "auto auto" }}>
-            <Button style={{marginTop: "50%"}} bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
-            <DeleteTeacherModal
-                show={this.state.showDeleteTeacherModal}
-                onHide={this.onHideDeleteTeacherModal}
-                idTeacher={this.state.idTeacherOfDeleteModal}
-            />
+            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
         </div>
     }
 
@@ -141,7 +131,7 @@ class TeacherTable extends Component {
         this.setState({ isUploading: false });
         console.error(error);
     };
-    handleUploadSuccess = (row, filename) => {
+    handleUploadSuccess = (row) => (filename) => {
         this.setState({ avatar: filename, progress: 100, isUploading: false });
         firebase
             .storage()
@@ -179,60 +169,33 @@ class TeacherTable extends Component {
         this.setState({ showDeleteTeacherModal: false })
     }
 
-
-
-
     handleShowDeleteModal = (row, event) => {
-        this.setState({ showDeleteTeacherModal: true,
-            idTeacherOfDeleteModal: row.idTeacher })
+        this.setState({
+            showDeleteTeacherModal: true,
+            idTeacherOfDeleteModal: row.idTeacher
+        })
     }
 
     afterSaveCell(oldValue, newValue, row, column) {
-        const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
-        teacherIDRef.set(row)
-
-        // const listClassRef = firebase.database().ref("ListClass")
-        // listClassRef.once("value", (snaps) => {
-        //     var allClass = snaps.val()
-        //     var index = 0 
-        //     snaps.forEach((snap) => {
-        //         var oldClass = snap.val()
-        //         var oldTeacher = oldClass.teacher
-        //         if (oldTeacher.idTeacher === row.idTeacher) {
-        //             oldClass.teacher = row
-        //             allClass[oldClass.idClass] = oldClass
-        //         }
-
-        //         if (index >= snaps.numChildren() - 1) {
-        //             console.log("Thay doi teacher trong list class")
-        //             listClassRef.update(allClass, (err) => {
-        //                 if (err) {
-        //                     console.log(err.message);
-                            
-        //                 }
-        //             })
-        //         }
-                
-        //         index += 1
-        //     })
-        // })
-    
-
-        const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
-        const teacherRefsThatNeedToChange = []
-        teacherInListClassRef.once("value", (snaps) => {
-            snaps.forEach((snap) => {
-                // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-                snap.ref.child("teacher").update(row, (error) => {
-                    if (error) {
-                        console.log("Co loi khi cap nhat thong tin giao vien")
-                    } else {
-                        console.log("Cap nhat thong tin giao vien thanh cong")
-                    }
+        if (oldValue !== newValue) {
+            const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
+            teacherIDRef.update(row)
+            const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
+            teacherInListClassRef.once("value", (snaps) => {
+                snaps.forEach((snap) => {
+                    // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
+                    snap.ref.child("teacher").update(row, (error) => {
+                        if (error) {
+                            console.log("Co loi khi cap nhat thong tin giao vien")
+                        } else {
+                            console.log("Cap nhat thong tin giao vien thanh cong")
+                        }
+                    })
                 })
-            })
 
-        })
+            })
+        }
+
 
     }
 
@@ -257,6 +220,6 @@ class TeacherTable extends Component {
 export default TeacherTable;
 
 TeacherTable.propTypes = {
-    searchTeacherID: PropType.string,
-    isSignedIn: PropType.bool.isRequired
+    isSignedIn: PropType.bool.isRequired,
+    onDeleteTeacher: PropType.func.isRequired,
 }

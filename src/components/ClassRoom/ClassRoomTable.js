@@ -1,24 +1,17 @@
 import React, { Component } from 'react';
 import * as firebase from "firebase"
 import BootstrapTable from "react-bootstrap-table-next"
-import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
+import cellEditFactory from 'react-bootstrap-table2-editor';
 import { Button, Image, ToggleButtonGroup, ToggleButton } from "react-bootstrap"
 import PropType from "prop-types"
-import DeleteClassRoomModal from "./DeleteClassRoomModal"
-import SelectTeacherForClassRoomModal from "./SelectTeacherForClassRoomModal"
-import { stat } from 'fs';
 
 class ClassRoomTable extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
             teacherID: "",
             isUploading: false,
             progress: 0,
-            showAddClassRoomModal: false,
-            showSelectTeacherModal: false,
-            showDeleteTeacherModal: false,
-            idClassOfSelectedTeacherModal: "",
             isLoading: false,
         }
 
@@ -28,7 +21,6 @@ class ClassRoomTable extends Component {
             text: "Mã Lớp Học",
             headerStyle: {
                 width: "7%",
-
             }
         }, {
             dataField: "grade",
@@ -107,21 +99,20 @@ class ClassRoomTable extends Component {
                 type: "textarea",
             }
             Object.assign(value.headerStyle, { textAlign: "center" })
+
+            value.editable = !(value.dataField === "Action" || value.dataField === "teacher.linkAvatar" || value.dataField === "level") && this.props.isSignedIn
+
         })
 
         this.state.columns = columns
     }
 
     handleChangeBtn = (row) => (event) => {
-        console.log("Neu yeu thuong nguoi sau, thi xin em cx dung quen ten anh")
-        this.setState({
-            showSelectTeacherModal: true,
-            idClassOfSelectedTeacherModal: row.idClass
-        })
+        this.props.onChooseTeacher(row.idClass)
     }
 
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
-        
+
         const teacher = row.teacher
         const nameTeacher = teacher.name
         return <div>
@@ -130,18 +121,13 @@ class ClassRoomTable extends Component {
             <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsStyle="info" onClick={this.handleChangeBtn(row)}>
                 Thay doi
             </Button>
-            <SelectTeacherForClassRoomModal
-                show={this.state.showSelectTeacherModal}
-                onHide={this.onHideSelectTeacherModal}
-                idClass={this.state.idClassOfSelectedTeacherModal}
-            />
         </div>
     }
 
     levelFormatter = (cell, row, rowIndex, formatExtraData) => {
         const level = cell
         return <div>
-            
+
             <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
                 <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
                 <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
@@ -151,9 +137,9 @@ class ClassRoomTable extends Component {
 
     onChangeToggleLevel = (row) => (event) => {
         console.log(event.target.value)
-        this.setState({isLoading: true})
-        const classRef = firebase.database().ref("ListClass").child(row.idClass).update({level: event.target.value}, (err) => {
-            this.setState({isLoading: false})
+        this.setState({ isLoading: true })
+        const classRef = firebase.database().ref("ListClass").child(row.idClass).update({ level: event.target.value }, (err) => {
+            this.setState({ isLoading: false })
             if (err) {
                 console.log(err.message)
             }
@@ -165,13 +151,8 @@ class ClassRoomTable extends Component {
     }
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
-        return <div style={{ margin: "auto auto" }}>
-            <Button bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
-            <DeleteClassRoomModal
-                show={this.state.showDeleteTeacherModal}
-                onHide={this.onHideDeleteTeacherModal}
-                idClass={row.idClass}
-            />
+        return <div style={{ marginTop: "50px" }}>
+            <Button bsStyle="danger" onClick={this.handleShowDeleteModal(row)}>Delete</Button>
         </div>
     }
 
@@ -205,13 +186,16 @@ class ClassRoomTable extends Component {
         this.setState({ showDeleteTeacherModal: false })
     }
 
-    handleShowDeleteModal = (row, event) => {
-        this.setState({ showDeleteTeacherModal: true })
+    handleShowDeleteModal = (row) => (event) => {
+        this.props.onDeleteClass(row.idClass)
     }
 
     afterSaveCell(oldValue, newValue, row, column) {
-        const classIDRef = firebase.database().ref().child("ListClass").child(row.idClass)
-        classIDRef.update(row)
+        if (oldValue !== newValue) {
+            const classIDRef = firebase.database().ref().child("ListClass").child(row.idClass)
+            classIDRef.update(row)
+        }
+
     }
 
     render() {
@@ -235,5 +219,7 @@ class ClassRoomTable extends Component {
 export default ClassRoomTable;
 
 ClassRoomTable.propTypes = {
-    searchTeacherID: PropType.string
+    onDeleteClass: PropType.func.isRequired,
+    onChooseTeacher: PropType.func.isRequired,
+    isSignedIn: PropType.bool.isRequired,
 }

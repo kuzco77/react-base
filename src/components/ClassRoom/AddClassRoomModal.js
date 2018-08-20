@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import '../App.css';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Modal, Button } from "react-bootstrap"
 import firebase from "firebase"
-import { stat } from 'fs';
 
 function FieldGroup({ id, label, help, ...props }) {
     return (
@@ -60,6 +59,10 @@ class AddClassRoomModal extends Component {
             time: this.state.time,
             timeCreate: firebase.database.ServerValue.TIMESTAMP,
             teacher: this.defaultTeacher
+        }, (err) => {
+            if (err) {
+                console.log(err.message)
+            }
         })
 
         this.setState({

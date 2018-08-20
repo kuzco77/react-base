@@ -101,9 +101,8 @@ class HomeController extends Component {
                     <ChangeClassIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
                 </Jumbotron>
             </div>
-
-
         )
     }
 }
+
 export default HomeController;

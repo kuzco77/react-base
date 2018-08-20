@@ -8,6 +8,7 @@ import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from './AddTeacherModal';
 import TeacherTable from './TeacherTable';
 import NewHeader from "../Header/NewHeader"
+import DeleteTeacherModal from './DeleteTeacherModal';
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
 
@@ -16,13 +17,13 @@ class TeacherController extends Component {
   constructor() {
     super()
     this.state = {
-      searchTeacherID: "",
       src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
       showAddTeacherModal: false,
-      searchTeacherID: "",
+      showDeleteTeacherModal: false,
+      idTeacherDeleteModal: "",
     }
   }
 
@@ -39,39 +40,53 @@ class TeacherController extends Component {
     firebase.auth().onAuthStateChanged((user) => {
 
       if (user) {
-          console.log("User is sign in")
-          // User is signed in.
-          this.setState({user})
-          var displayName = user.displayName;
-          var email = user.email;
-          var emailVerified = user.emailVerified;
-          var photoURL = user.photoURL;
-          var isAnonymous = user.isAnonymous;
-          var uid = user.uid;
-          var providerData = user.providerData;
-          // ...
+        console.log("User is sign in")
+        // User is signed in.
+        this.setState({ user })
+        var displayName = user.displayName;
+        var email = user.email;
+        var emailVerified = user.emailVerified;
+        var photoURL = user.photoURL;
+        var isAnonymous = user.isAnonymous;
+        var uid = user.uid;
+        var providerData = user.providerData;
+        // ...
       } else {
-          console.log("User is signed out")
-          this.setState({user: {}})
+        console.log("User is signed out")
+        this.setState({ user: {} })
       }
-  });
+    })
   }
 
   handleIDTF = (event) => {
     const searchTeacherID = event.target.value
-    this.setState({searchTeacherID: ""})
+    this.setState({ searchTeacherID: "" })
   }
 
   handleAddTeacherBtn = (event) => {
-    this.setState({showAddTeacherModal: true,})
+    this.setState({ showAddTeacherModal: true, })
   }
 
-  handleClose = (event) => {
-    this.setState({showAddTeacherModal: false})
+  onHideAddTeacherModal = (event) => {
+    this.setState({ showAddTeacherModal: false })
   }
 
   handleSearchTeacher = (event) => {
     this.state.searchTeacherID = event.target.value
+  }
+
+  onDeleteTeacher = (idTeacher) => {
+    this.setState({
+      idTeacherDeleteModal: idTeacher,
+      showDeleteTeacherModal: true,
+    })
+  }
+
+  onHideDeleteTeacherModal = () => {
+    this.setState({
+      showDeleteTeacherModal: false,
+      idTeacherDeleteModal: "",
+    })
   }
 
   render() {
@@ -84,14 +99,21 @@ class TeacherController extends Component {
             Nhấp đúp vào ô muốn chỉnh sửa . Is signedIn {this.state.user != 0}
           </p>
 
-          
+
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button style={{width: "100px", marginRight: "10px"}} bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
+            <Button style={{ width: "100px", marginRight: "10px" }} bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
           </OverlayTrigger>
 
-          <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.handleClose} />
-          <TeacherTable searchTeacherID={this.state.searchTeacherID} isSignedIn={(this.state.user != null)}/>
-
+          <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.onHideAddTeacherModal} />
+          <TeacherTable
+            isSignedIn={(this.state.user !== null)}
+            onDeleteTeacher={this.onDeleteTeacher}
+          />
+          <DeleteTeacherModal
+            show={this.state.showDeleteTeacherModal}
+            onHide={this.onHideDeleteTeacherModal}
+            idTeacher={this.state.idTeacherDeleteModal}
+          />
         </form>
       </div>
 

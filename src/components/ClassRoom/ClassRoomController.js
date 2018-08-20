@@ -9,6 +9,8 @@ import AddTeacherModal from '../Teacher/AddTeacherModal';
 import ClassRoomTable from './ClassRoomTable';
 import AddClassRoomModal from './AddClassRoomModal';
 import NewHeader from "../Header/NewHeader"
+import DeleteClassRoomModal from './DeleteClassRoomModal';
+import SelectTeacherForClassRoomModal from './SelectTeacherForClassRoomModal';
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Lớp Học</Tooltip>;
 
@@ -17,15 +19,20 @@ class ClassRoomController extends Component {
   constructor() {
     super()
     this.state = {
-      searchTeacherID: "",
       src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
       showAddClassModal: false,
-      searchTeacherID: "",
+      showDeleteClassModal: false,
+      idClassDeleteClassModal: "",
+      user: {},
+      showChooseTeacherModal: false,
+      idClassForChooseTeacherModal: "",
+
     }
   }
+  
 
   handleChangeValueBtn() {
     const rootRef = firebase.database().ref().child("react")
@@ -36,28 +43,70 @@ class ClassRoomController extends Component {
 
   componentDidMount() {
     document.title = "Giảng viên"
+
+    firebase.auth().onAuthStateChanged((user) => {
+
+      if (user) {
+        console.log("User is sign in")
+        // User is signed in.
+        this.setState({ user })
+        // ...
+      } else {
+        console.log("User is signed out")
+        this.setState({ user: {} })
+      }
+    })
   }
 
   handleIDTF = (event) => {
-    this.setState({searchTeacherID: ""})
+    this.setState({ searchTeacherID: "" })
   }
 
   handleAddClassBtn = (event) => {
-    this.setState({showAddClassModal: true,})
+    this.setState({ showAddClassModal: true, })
   }
 
   handleClose = (event) => {
-    this.setState({showAddClassModal: false})
+    this.setState({ showAddClassModal: false })
   }
 
   handleSearchTeacher = (event) => {
     this.state.searchTeacherID = event.target.value
   }
 
+  onDeleteClass = (idClass) => {
+    this.setState({
+      idClassDeleteClassModal: idClass,
+      showDeleteClassModal: true,
+    })
+
+  }
+
+  onHideDeleteClassModal = () => {
+    this.setState({
+      showDeleteClassModal: false,
+      idClassDeleteClassModal: "",
+    })
+  }
+
+  onChooseTeacher = (idClass) => {
+    this.setState({
+      idClassForChooseTeacherModal: idClass,
+      showChooseTeacherModal: true,
+    })
+  }
+
+  onHideListTeacher = () => {
+    this.setState({
+      showChooseTeacherModal: false,
+      idClassForChooseTeacherModal: "",
+    })
+  }
+
   render() {
     return (
       <div>
-          {/* <NewHeader/> */}
+        {/* <NewHeader/> */}
         <form className="App">
 
           <p className="App-intro">
@@ -65,13 +114,26 @@ class ClassRoomController extends Component {
           </p>
 
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button style={{width: "100px"}} bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
+            <Button style={{ width: "100px" }} bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
           </OverlayTrigger>
 
           <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />
 
-          <ClassRoomTable searchTeacherID={this.state.searchTeacherID}/>
-
+          <ClassRoomTable
+            onDeleteClass={this.onDeleteClass}
+            onChooseTeacher={this.onChooseTeacher}
+            isSignedIn = {(this.state.user !== null)}
+          />
+          <DeleteClassRoomModal
+            show={this.state.showDeleteClassModal}
+            onHide={this.onHideDeleteClassModal}
+            idClass={this.state.idClassDeleteClassModal}
+          />
+          <SelectTeacherForClassRoomModal
+            show={this.state.showChooseTeacherModal}
+            onHide={this.onHideListTeacher}
+            idClass={this.state.idClassForChooseTeacherModal}
+          />
         </form>
       </div>
 
