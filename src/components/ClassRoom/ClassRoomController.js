@@ -26,13 +26,12 @@ class ClassRoomController extends Component {
       showAddClassModal: false,
       showDeleteClassModal: false,
       idClassDeleteClassModal: "",
-      user: {},
       showChooseTeacherModal: false,
       idClassForChooseTeacherModal: "",
-
+      products: [],
     }
   }
-  
+
 
   handleChangeValueBtn() {
     const rootRef = firebase.database().ref().child("react")
@@ -42,18 +41,20 @@ class ClassRoomController extends Component {
   }
 
   componentDidMount() {
-    document.title = "Giảng viên"
+    document.title = "Người dạy"
 
-    firebase.auth().onAuthStateChanged((user) => {
+    var classRef = firebase.database().ref().child("ListClass")
 
-      if (user) {
-        console.log("User is sign in")
-        // User is signed in.
-        this.setState({ user })
-        // ...
-      } else {
-        console.log("User is signed out")
-        this.setState({ user: {} })
+    classRef.on("value", snaps => {
+      const newProducts = []
+      snaps.forEach(snap => {
+        newProducts.push(snap.val())
+      })
+      this.setState({ products: newProducts })
+    }, (err) => {
+      if (err) {
+        console.log("Co loi xay ra khi lay du lieu giao vien: "+err.message);
+        
       }
     })
   }
@@ -122,7 +123,8 @@ class ClassRoomController extends Component {
           <ClassRoomTable
             onDeleteClass={this.onDeleteClass}
             onChooseTeacher={this.onChooseTeacher}
-            isSignedIn = {(this.state.user !== null)}
+            isSignedIn={(firebase.auth().currentUser !== null)}
+            products={this.state.products}
           />
           <DeleteClassRoomModal
             show={this.state.showDeleteClassModal}

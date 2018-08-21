@@ -55,9 +55,16 @@ class TeacherTable extends Component {
                 width: "10%",
             }
         }, {
+            dataField: "gmail",
+            text: "Gmail",
+            headerStyle: {
+                width: "10%",
+            },
+            formatter: this.gmailFormatter
+        }, {
             dataField: "linkAvatar",
             text: "Avatar",
-            formatter: this.avatarFormater,
+            formatter: this.linkAvatarFormatter,
             headerStyle: {
                 width: "12%",
             }
@@ -84,7 +91,23 @@ class TeacherTable extends Component {
         this.state.columns = columns
     }
 
-    avatarFormater = (cell, row, rowIndex, formatExtraData) => {
+    gmailFormatter = (cell, row, rowIndex, formatExtraData) => {
+        var gmailArray = cell.split("@", 2)
+
+        
+        if (gmailArray[1] === "gmail.com") {
+            return <div>
+            <p>{gmailArray[0]}</p>
+        </div>
+        } else {
+            return <div>
+            <p>Gmail khong dung dinh dang</p>
+        </div>
+        }
+        
+    }
+
+    linkAvatarFormatter = (cell, row, rowIndex, formatExtraData) => {
         return <div>
             <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
             <label style={{
@@ -147,24 +170,6 @@ class TeacherTable extends Component {
         teacherIDRef.set(url)
     }
 
-    componentDidMount() {
-
-        var teacherIDRef = firebase.database().ref().child("ListTeacher")
-        if (this.state.searchTeacherID !== "") {
-            teacherIDRef = teacherIDRef.orderByChild("idTeacher").startAt(this.state.searchTeacherID).endAt(this.state.searchTeacherID + "\uf8ff")
-        }
-
-
-        teacherIDRef.on("value", snaps => {
-            const newProducts = []
-            snaps.forEach(snap => {
-                newProducts.push(snap.val())
-            })
-            this.setState({ products: newProducts })
-        })
-
-    }
-
     onHideDeleteTeacherModal = (event) => {
         this.setState({ showDeleteTeacherModal: false })
     }
@@ -203,7 +208,7 @@ class TeacherTable extends Component {
         return (
             <BootstrapTable
                 keyField="idTeacher"
-                data={this.state.products}
+                data={this.props.products}
                 columns={this.state.columns}
                 striped
                 hover
@@ -222,4 +227,5 @@ export default TeacherTable;
 TeacherTable.propTypes = {
     isSignedIn: PropType.bool.isRequired,
     onDeleteTeacher: PropType.func.isRequired,
+    products: PropType.array.isRequired,
 }

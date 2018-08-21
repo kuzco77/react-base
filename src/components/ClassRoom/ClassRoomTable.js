@@ -168,20 +168,6 @@ class ClassRoomTable extends Component {
         teacherIDRef.set(url)
     }
 
-    componentDidMount() {
-
-        var classRef = firebase.database().ref().child("ListClass")
-
-        classRef.on("value", snaps => {
-            const newProducts = []
-            snaps.forEach(snap => {
-                newProducts.push(snap.val())
-            })
-            this.setState({ products: newProducts })
-        })
-
-    }
-
     onHideDeleteTeacherModal = (event) => {
         this.setState({ showDeleteTeacherModal: false })
     }
@@ -202,7 +188,7 @@ class ClassRoomTable extends Component {
         return (
             <BootstrapTable
                 keyField="idClass"
-                data={this.state.products}
+                data={this.props.products}
                 columns={this.state.columns}
                 striped
                 hover
@@ -222,4 +208,5 @@ ClassRoomTable.propTypes = {
     onDeleteClass: PropType.func.isRequired,
     onChooseTeacher: PropType.func.isRequired,
     isSignedIn: PropType.bool.isRequired,
+    products: PropType.array.isRequired,
 }

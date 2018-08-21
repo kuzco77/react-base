@@ -33,11 +33,10 @@ var config = {
 
 firebase.initializeApp(config);
 
-
 ReactDOM.render(
   <BrowserRouter >
     <div>
-      <NewHeader />
+      <NewHeader/>
       <Route exact path={`${process.env.PUBLIC_URL}/`} component={HomeController} />
       <Route path={`${process.env.PUBLIC_URL}/teacher`} component={TeacherController} />
       <Route path={`${process.env.PUBLIC_URL}/classRoom`} component={ClassRoomController} />

@@ -116,7 +116,7 @@ class ChangeTeacherIDView extends Component {
                 if (typeof callback === "function") callback(ketqua + "1")
             } else {
                 var allTeacherIDNumber = []
-                snaps.forEach((snap) => {                  
+                snaps.forEach((snap) => {
                     var lastIDTeacher = snap.val().idTeacher
                     const number = Number(lastIDTeacher.slice(ketqua.length, ketqua.length + 1))
                     allTeacherIDNumber.push(number)
@@ -157,21 +157,21 @@ class ChangeTeacherIDView extends Component {
 
     addPhoneToTeacher = () => {
         const listTeacher = firebase.database().ref("ListTeacher")
-        
+
 
         listTeacher.once("value", (snaps) => {
             var allTeacher = snaps.val()
-            var index = 0 
+            var index = 0
             snaps.forEach((snap) => {
                 var oldTeacher = snap.val()
                 oldTeacher.phoneNumber = "098 605 8405"
                 allTeacher['${oldTeacher.idTeacher}'] = oldTeacher
 
-                if (index >= (snaps.numChildren() -1)) {
+                if (index >= (snaps.numChildren() - 1)) {
                     console.log("Them sdt vao nguoi day");
                     listTeacher.update(allTeacher, (err) => {
-                        if (err) console.log(err.message);   
-                    })                  
+                        if (err) console.log(err.message);
+                    })
                 }
                 index += 1
             })
@@ -201,10 +201,33 @@ class ChangeTeacherIDView extends Component {
                                 oldClass.teacher = oldTeacher
                                 allClass[oldClass.idClass] = oldClass
                             }
-                            
+
                         })
                     })
                 })
+            })
+        })
+    }
+
+    addGmailToTeacher = () => {
+        const listTeacher = firebase.database().ref("ListTeacher")
+        listTeacher.once("value", (snaps) => {
+            var allTeacher = snaps.val()
+            var index = 0
+            var updateTeacherData = {}
+            snaps.forEach((snap) => {
+                var oldTeacher = snap.val()
+                updateTeacherData[oldTeacher.idTeacher+"/gmail"] = "namanhchu2103@gmail.com"
+                // oldTeacher.gmail = "namanh.chu2103@gmail.com"
+                // allTeacher['${oldTeacher.idTeacher}'] = oldTeacher
+
+                if (index >= (snaps.numChildren() - 1)) {
+                    console.log("Them gmail vao nguoi day");
+                    listTeacher.update(updateTeacherData, (err) => {
+                        if (err) console.log(err.message);
+                    })
+                }
+                index += 1
             })
         })
     }
@@ -217,10 +240,11 @@ class ChangeTeacherIDView extends Component {
                     <input id="newTeacherID" placeholder="Mã người dạy mới" value={this.state.newTeacherID} onChange={this.onChangeTF} />
                     <Button bsStyle="danger" onClick={this.changeTeacherID}>Thay đổi (Thử nghiệm)</Button><br />
                     <input id="nameBeforeChange" placeholder="Tên người dạy" value={this.state.nameBeforeChange} onChange={this.onChangeTF} />
-                    <Button bsStyle="danger" onClick={this.handleConvertButton}>Convert (Thử nghiệm)</Button><br/>
-                    <Button bsStyle="danger" onClick={this.changeAllToRightID}>Thay đổi tất cả id người dạy (Thử nghiệm)</Button><br/>
-                    <Button bsStyle="danger" onClick={this.addPhoneToTeacher}>Thêm số điện thoại cho người dạy (Thử nghiệm)</Button><br/>
-    
+                    <Button bsStyle="danger" onClick={this.handleConvertButton}>Convert (Thử nghiệm)</Button><br />
+                    <Button bsStyle="danger" onClick={this.changeAllToRightID}>Thay đổi tất cả id người dạy (Thử nghiệm)</Button><br />
+                    <Button bsStyle="danger" onClick={this.addPhoneToTeacher}>Thêm số điện thoại cho người dạy (Thử nghiệm)</Button><br />
+                    <Button bsStyle="danger" onClick={this.addGmailToTeacher}>Thêm gmail cho người dạy (Thử nghiệm)</Button><br />
+
                     <p>{this.state.nameAfterChange}</p>
                 </div>
             )
@@ -229,15 +253,13 @@ class ChangeTeacherIDView extends Component {
                 <div></div>
             )
         }
-        
+
     }
 }
 
 export default ChangeTeacherIDView
 
 ChangeTeacherIDView.propTypes = {
-    // oldTeacherID: PropType.string.isRequired,
-    // newTeacherID: PropType.string.isRequired
     isSignedIn: PropType.bool.isRequired,
     isGod: PropType.bool.isRequired,
 }

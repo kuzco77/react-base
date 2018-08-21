@@ -7,7 +7,6 @@ import { Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap"
 import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from './AddTeacherModal';
 import TeacherTable from './TeacherTable';
-import NewHeader from "../Header/NewHeader"
 import DeleteTeacherModal from './DeleteTeacherModal';
 
 const tooltip = <Tooltip id="modal-tooltip">Thêm Giảng Viên</Tooltip>;
@@ -24,6 +23,7 @@ class TeacherController extends Component {
       showAddTeacherModal: false,
       showDeleteTeacherModal: false,
       idTeacherDeleteModal: "",
+      products: [],
     }
   }
 
@@ -37,25 +37,36 @@ class TeacherController extends Component {
   componentDidMount() {
     document.title = "Giảng viên"
 
-    firebase.auth().onAuthStateChanged((user) => {
+    var teacherIDRef = firebase.database().ref().child("ListTeacher")
+    teacherIDRef.ref
+    teacherIDRef.on("value", (snaps) => {
+      const newProducts = []
+      snaps.forEach(snap => {
+        newProducts.push(snap.val())
+      })
+      this.setState({ products: newProducts })
+      
+    }, (err) => {
+      if (err) {
+        console.log("Co loi xay ra khi lay du lieu giao vien: "+err.message);
+        if (firebase.auth().currentUser) {
+          teacherIDRef.orderByChild("email").equalTo(firebase.auth().currentUser.email).on("value", (snaps) => {
+            const newProducts = []
+            snaps.forEach((snap) => {
+              newProducts.push(snap.val())
+            })
+            this.setState({ products: newProducts })
+          })
+        }
+        
 
-      if (user) {
-        console.log("User is sign in")
-        // User is signed in.
-        this.setState({ user })
-        var displayName = user.displayName;
-        var email = user.email;
-        var emailVerified = user.emailVerified;
-        var photoURL = user.photoURL;
-        var isAnonymous = user.isAnonymous;
-        var uid = user.uid;
-        var providerData = user.providerData;
-        // ...
-      } else {
-        console.log("User is signed out")
-        this.setState({ user: {} })
       }
     })
+    if (firebase.auth().currentUser) {
+      console.log(firebase.auth().currentUser.email)
+    }
+    
+    
   }
 
   handleIDTF = (event) => {
@@ -96,7 +107,7 @@ class TeacherController extends Component {
         <form className="App">
 
           <p className="App-intro">
-            Nhấp đúp vào ô muốn chỉnh sửa . Is signedIn {this.state.user != 0}
+            Nhấp đúp vào ô muốn chỉnh sửa . Is signedIn
           </p>
 
 
@@ -104,10 +115,13 @@ class TeacherController extends Component {
             <Button style={{ width: "100px", marginRight: "10px" }} bsStyle="success" onClick={this.handleAddTeacherBtn}>+</Button>
           </OverlayTrigger>
 
-          <AddTeacherModal show={this.state.showAddTeacherModal} onHide={this.onHideAddTeacherModal} />
+          <AddTeacherModal
+            show={this.state.showAddTeacherModal}
+            onHide={this.onHideAddTeacherModal} />
           <TeacherTable
-            isSignedIn={(this.state.user !== null)}
+            isSignedIn={(firebase.auth().currentUser !== null)}
             onDeleteTeacher={this.onDeleteTeacher}
+            products= {this.state.products}
           />
           <DeleteTeacherModal
             show={this.state.showDeleteTeacherModal}
