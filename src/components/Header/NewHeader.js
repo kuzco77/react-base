@@ -19,8 +19,8 @@ class NewHeader extends Component {
           <li><Link to={`${process.env.PUBLIC_URL}/`}>Home</Link></li>
           <li><Link to={`${process.env.PUBLIC_URL}/teacher`}>Teacher</Link></li>
           <li><Link to={`${process.env.PUBLIC_URL}/classRoom`}>Class</Link></li>
-          <li><Link to={`${process.env.PUBLIC_URL}/about`}>About us</Link></li>
-          <li><Link to={`${process.env.PUBLIC_URL}/contact`}>Contact</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/register`}>Register</Link></li>
+          <li><Link to={`${process.env.PUBLIC_URL}/request`}>Request</Link></li>
           
 
         </ul>

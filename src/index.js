@@ -8,6 +8,7 @@ import NewHeader from "./components/Header/NewHeader"
 import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 import TeacherController from './components/Teacher/TeacherController';
 import HomeController from "./components/Home/HomeController"
+import RegisterController from './components/Register/RegisterController';
 
 // Initialize Firebase (react-base)
 var config = {
@@ -40,6 +41,7 @@ ReactDOM.render(
       <Route exact path={`${process.env.PUBLIC_URL}/`} component={HomeController} />
       <Route path={`${process.env.PUBLIC_URL}/teacher`} component={TeacherController} />
       <Route path={`${process.env.PUBLIC_URL}/classRoom`} component={ClassRoomController} />
+      <Route path={`${process.env.PUBLIC_URL}/register`} component={RegisterController} />
     </div>
   </BrowserRouter>,
   document.getElementById('root'));

@@ -38,7 +38,14 @@ class TeacherController extends Component {
     document.title = "Giảng viên"
 
     var teacherIDRef = firebase.database().ref().child("ListTeacher")
-    teacherIDRef.ref
+    var currentTeacherIDRef = firebase.database().ref().child("ListTeacher").child("anhnd1")
+
+    currentTeacherIDRef.on("value", (snap) => {
+      const newProducts = []
+      newProducts.push(snap.val())
+      this.setState({ products: newProducts})
+    })
+
     teacherIDRef.on("value", (snaps) => {
       const newProducts = []
       snaps.forEach(snap => {
@@ -50,12 +57,10 @@ class TeacherController extends Component {
       if (err) {
         console.log("Co loi xay ra khi lay du lieu giao vien: "+err.message);
         if (firebase.auth().currentUser) {
-          teacherIDRef.orderByChild("email").equalTo(firebase.auth().currentUser.email).on("value", (snaps) => {
+          currentTeacherIDRef.on("value", (snap) => {
             const newProducts = []
-            snaps.forEach((snap) => {
-              newProducts.push(snap.val())
-            })
-            this.setState({ products: newProducts })
+            newProducts.push(snap.val())
+            this.setState({ products: newProducts})
           })
         }
         

@@ -53,7 +53,7 @@ class ClassRoomController extends Component {
       this.setState({ products: newProducts })
     }, (err) => {
       if (err) {
-        console.log("Co loi xay ra khi lay du lieu giao vien: "+err.message);
+        console.log("Co loi xay ra khi lay du lieu lop hoc: "+err.message);
         
       }
     })

@@ -112,27 +112,38 @@ class ClassRoomTable extends Component {
     }
 
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
-
-        const teacher = row.teacher
-        const nameTeacher = teacher.name
-        return <div>
-            <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
-            <p>{nameTeacher}</p>
-            <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsStyle="info" onClick={this.handleChangeBtn(row)}>
-                Thay doi
+        if (row) {
+            const teacher = row.teacher
+            const nameTeacher = teacher.name
+            return <div>
+                <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
+                <p>{nameTeacher}</p>
+                <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsStyle="info" onClick={this.handleChangeBtn(row)}>
+                    Thay doi
             </Button>
-        </div>
+            </div>
+        } else {
+            return <div>No data</div>
+        }
+
+
+
     }
 
     levelFormatter = (cell, row, rowIndex, formatExtraData) => {
-        const level = cell
-        return <div>
+        if (row) {
+            const level = cell
+            return <div>
 
-            <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
-                <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
-                <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
-            </ToggleButtonGroup>
-        </div>
+                <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
+                    <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
+                    <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
+                </ToggleButtonGroup>
+            </div>
+        } else {
+            return <div>No data</div>
+        }
+
     }
 
     onChangeToggleLevel = (row) => (event) => {
@@ -151,15 +162,25 @@ class ClassRoomTable extends Component {
     }
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
-        return <div style={{ marginTop: "50px" }}>
-            <Button bsStyle="danger" onClick={this.handleShowDeleteModal(row)}>Delete</Button>
-        </div>
+        if (row) {
+            return <div style={{ marginTop: "50px" }}>
+                <Button bsStyle="danger" onClick={this.handleShowDeleteModal(row)}>Delete</Button>
+            </div>
+        } else {
+            return <div>No data</div>
+        }
+
     }
 
     achievementFormatter = (cell, row, rowIndex, formatExtraData) => {
-        return <div style={{ margin: "auto auto" }}>
-            <p style={{ whiteSpace: "pre-line", textAlign: "left", borderLeft: "10px" }}>{row.achievement}</p>
-        </div>
+        if (row) {
+            return <div style={{ margin: "auto auto" }}>
+                <p style={{ whiteSpace: "pre-line", textAlign: "left", borderLeft: "10px" }}>{row.achievement}</p>
+            </div>
+        } else {
+            return <div>No data</div>
+        }
+
     }
 
     setAvatarLink = (row, url) => {
