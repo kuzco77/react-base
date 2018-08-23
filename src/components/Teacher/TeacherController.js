@@ -40,12 +40,6 @@ class TeacherController extends Component {
     var teacherIDRef = firebase.database().ref().child("ListTeacher")
     var currentTeacherIDRef = firebase.database().ref().child("ListTeacher").child("anhnd1")
 
-    currentTeacherIDRef.on("value", (snap) => {
-      const newProducts = []
-      newProducts.push(snap.val())
-      this.setState({ products: newProducts})
-    })
-
     teacherIDRef.on("value", (snaps) => {
       const newProducts = []
       snaps.forEach(snap => {
@@ -66,11 +60,7 @@ class TeacherController extends Component {
         
 
       }
-    })
-    if (firebase.auth().currentUser) {
-      console.log(firebase.auth().currentUser.email)
-    }
-    
+    })    
     
   }
 
@@ -91,7 +81,7 @@ class TeacherController extends Component {
     this.state.searchTeacherID = event.target.value
   }
 
-  onDeleteTeacher = (idTeacher) => {
+  onDeleteTeacher = (idTeacher) => () => {
     this.setState({
       idTeacherDeleteModal: idTeacher,
       showDeleteTeacherModal: true,

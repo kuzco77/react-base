@@ -137,7 +137,7 @@ class TeacherTable extends Component {
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div style={{ margin: "auto auto" }}>
-            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.handleShowDeleteModal.bind(this, row)}>Delete</Button>
+            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.props.onDeleteTeacher(row)}>Delete</Button>
         </div>
     }
 
@@ -174,7 +174,7 @@ class TeacherTable extends Component {
         this.setState({ showDeleteTeacherModal: false })
     }
 
-    handleShowDeleteModal = (row, event) => {
+    handleShowDeleteModal = (row) => (event) => {
         this.setState({
             showDeleteTeacherModal: true,
             idTeacherOfDeleteModal: row.idTeacher
