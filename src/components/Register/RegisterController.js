@@ -3,6 +3,7 @@ import { Jumbotron, Button } from "react-bootstrap"
 import firebase from "firebase"
 import RegisterTable from './RegisterTable';
 import DeleteRegisterModal from './DeleteRegisterModal';
+import AcceptRegisterModel from './AcceptRegisterModal';
 
 class RegisterController extends Component {
     constructor() {
@@ -11,7 +12,7 @@ class RegisterController extends Component {
             listRegister: [],
             idRegisterDelete: "",
             showDeleteRegisterModal: false,
-            idRegisterAccept: "",
+            registerData: "",
             showAcceptRegisterModal: false,
         }
     }
@@ -34,12 +35,12 @@ class RegisterController extends Component {
             if (err) {
                 console.log("Có lỗi xảy ra khi lấy dữ liệu đăng ký");
                 console.log(err.message);
-                
+
             }
-            
+
         })
         console.log(firebase.auth().currentUser !== null);
-        
+
     }
 
 
@@ -50,9 +51,11 @@ class RegisterController extends Component {
         })
     }
 
-    onAcceptRegister = (idRegister) => () => {
+    onAcceptRegister = (registerData) => () => {
+        console.log("Register Data in onAcceptRegister: "+ registerData.registerClass.teacher.name);
+        
         this.setState({
-            idRegisterAccept: idRegister,
+            registerData,
             showAcceptRegisterModal: true,
         })
     }
@@ -77,12 +80,18 @@ class RegisterController extends Component {
                 <RegisterTable
                     isSignedIn={firebase.auth().currentUser !== null}
                     onDeleteRegister={this.onDeleteRegister}
+                    onAcceptRegister={this.onAcceptRegister}
                     products={this.state.listRegister}
                 />
                 <DeleteRegisterModal
                     show={this.state.showDeleteRegisterModal}
                     onHide={this.onHideDeleteModal}
-                    idRegister={this.state.idRegisterDelete} 
+                    idRegister={this.state.idRegisterDelete}
+                />
+                <AcceptRegisterModel
+                    show={this.state.showAcceptRegisterModal}
+                    onHide={this.onHideAcceptModal}
+                    registerData={this.state.registerData}
                 />
             </div>
         )

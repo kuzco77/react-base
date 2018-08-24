@@ -105,9 +105,10 @@ class RegisterTable extends Component {
     }
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
+        const registerData = row
         return <div style={{ margin: "auto auto" }}>
-            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.props.onDeleteRegister(row.idRegister)}>Delete</Button>
-            <Button style={{ marginTop: "50%" }} bsStyle="success" onClick={this.props.onAcceptRegister(row.idRegister)}>Accept</Button>
+            <Button style={{ marginTop: "25%" }} bsStyle="danger" onClick={this.props.onDeleteRegister(row.idRegister)}>Delete</Button>
+            <Button bsStyle="success" onClick={this.props.onAcceptRegister(registerData)}>Accept</Button>
         </div>
     }
 
@@ -152,5 +153,6 @@ export default RegisterTable;
 RegisterTable.propTypes = {
     isSignedIn: PropType.bool.isRequired,
     onDeleteRegister: PropType.func.isRequired,
+    onAcceptRegister: PropType.func.isRequired,
     products: PropType.array.isRequired,
 }

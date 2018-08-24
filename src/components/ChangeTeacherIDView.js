@@ -15,6 +15,15 @@ class ChangeTeacherIDView extends Component {
         }
     }
 
+    componentDidMount = () => {
+        console.log(this.cVNWCB("Nguyen Duc Anh"));
+        this.convertNameToID("Nguyen Duc Anh", (result) => {
+            console.log(result);
+            
+        });
+        
+    }
+
     findSmallestMissingNumberFromSortedArray = (array) => {
         var index = 1
         while (index === array.shift()) {
@@ -97,8 +106,7 @@ class ChangeTeacherIDView extends Component {
 
     }
 
-    convertNameToID = (oldName, callback) => {
-        // Convert nhu binh thuong
+    cVNWCB = (oldName) => {
         var aliasString = this.changeAlias(oldName)
         var hoVaTenArray = aliasString.split(" ")
         var ketqua = hoVaTenArray.pop()
@@ -106,8 +114,15 @@ class ChangeTeacherIDView extends Component {
         hoVaTenDemArray.forEach((word) => {
             ketqua += word.charAt(0)
         })
+        return ketqua + "1"
+    }
+
+    convertNameToID = (oldName, callback) => {
+        // Convert nhu binh thuong
+        var ketqua = this.cVNWCB(oldName)
 
         console.log("Ket qua vua moi ra lo: " + ketqua)
+        ketqua = ketqua.slice(0,-1)
 
 
         const teacherRef = firebase.database().ref("ListTeacher").orderByKey().startAt(ketqua).endAt(ketqua + '\uf8ff')
