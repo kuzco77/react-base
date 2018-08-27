@@ -99,7 +99,7 @@ class RegisterTable extends Component {
 
     linkAvatarFormatter = (cell, row, rowIndex, formatExtraData) => {
         return <div>
-            <Image id="target" src={cell} height={100} width={100} circle={true} /><br/>
+            <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
             <p>{row.registerClass.teacher.name}</p>
         </div>
     }
@@ -123,11 +123,16 @@ class RegisterTable extends Component {
 
     emailFormatter = (cell, row, rowIndex, formatExtraData) => {
         var gmailArray = cell.split("@", 2)
+
+        if (gmailArray.length === 2) {
             return <div>
-            <p>{gmailArray[0]}</p><br/>
-            <p>@{gmailArray[1]}</p>
-        </div>
-        
+                {gmailArray[0]}<br />
+                @{gmailArray[1]}
+            </div>
+        }
+
+        return <div>cell</div>
+
     }
 
     render() {

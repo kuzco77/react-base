@@ -94,16 +94,23 @@ class TeacherTable extends Component {
     gmailFormatter = (cell, row, rowIndex, formatExtraData) => {
         var gmailArray = cell.split("@", 2)
 
-        
-        if (gmailArray[1] === "gmail.com") {
-            return <div>
-            <p>{gmailArray[0]}</p>
-        </div>
-        } else {
-            return <div>
-            <p>Gmail khong dung dinh dang</p>
-        </div>
+        if (gmailArray.length === 2) {
+            if (gmailArray[1] === "gmail.com") {
+                return <div>
+                <p>{gmailArray[0]}</p>
+            </div>
+            } else {
+                return <div>
+                <p>Gmail khong dung dinh dang</p>
+            </div>
+            }
         }
+
+        return <div>
+            Email khong dung dinh dang
+        </div>
+        
+        
         
     }
 

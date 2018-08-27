@@ -22,8 +22,6 @@ class RegisterController extends Component {
 
         const listRegisterRef = firebase.database().ref("ListRegisterClass").limitToLast(20)
         listRegisterRef.on("value", (snaps) => {
-            console.log(snaps.numChildren());
-
             const newListRegister = []
             snaps.forEach((snap) => {
                 const newRegister = snap.val()

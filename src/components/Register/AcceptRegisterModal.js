@@ -7,33 +7,40 @@ class AcceptRegisterModel extends Component {
 
     onAcceptRegister = () => {
         var registerData = this.props.registerData
-        var studentData = Object({}, this.props.registerData) 
+        var studentData = Object.assign({}, this.props.registerData)
         delete studentData.registerClass
+        delete studentData.timeSend
 
-        const studentINClassRef = firebase.database().ref("ListClass").child(registerData.registerClass.idClass).child("student")
-        const listStudent = firebase.database().ref("ListStudent").child(registerData.idRegister)
+        this.convertNameToRightID(this.props.registerData.name, (result) => {
+            studentData.idStudent = result
+            var updateStudentData = {}
+            updateStudentData["ListClass/"+registerData.registerClass.idClass+"/student/"+studentData.idStudent] = studentData
+            updateStudentData["ListStudent/" + result] = studentData
 
-        console.log("AcceptRegisterModel: idRegister ", registerData.idRegister)
-        var updateStudentData = {}
-        // updateStudentData["ListClass/"+registerData.registerClass.idClass+"/student"] = studentData
-        updateStudentData["ListStudent/"+registerData.idRegister] = studentData
-        
-        firebase.database().ref().set(updateStudentData, (error) => {
-            if (error) {
-                console.log("Có lỗi xảy ra khi thêm thông tin học sinh vào listClass va ListStudent: " + error);
-            } else {
-                console.log("Them hoc sinh vao listClass va ListStudent thanh cong");
-                
-            }
+            firebase.database().ref().update(updateStudentData, (error) => {
+                if (error) {
+                    console.log("Có lỗi xảy ra khi thêm thông tin học sinh vào listClass va ListStudent: " + error);
+                } else {
+                    console.log("Them hoc sinh vao listClass va ListStudent thanh cong");
+                    this.props.onHide()
+                }
+            })
+
+            
         })
 
-        this.props.onHide()
+
+
+
+
+
+
     }
 
     componentDidMount = () => {
         this.convertNameToRightID("Nguyen Duc Anh", (result) => {
             console.log(result);
-            
+
         })
     }
     convertNameToRightID = (oldName, callback) => {
@@ -63,7 +70,7 @@ class AcceptRegisterModel extends Component {
             } else {
                 var allStudentIDNumber = []
                 snaps.forEach((snap) => {
-                    var lastIDStudent = snap.val().idTeacher
+                    var lastIDStudent = snap.val().idStudent
                     const number = Number(lastIDStudent.slice(wrongIDTemp.length, wrongIDTemp.length + 1))
                     allStudentIDNumber.push(number)
 
@@ -88,6 +95,7 @@ class AcceptRegisterModel extends Component {
     }
 
     changeAlias = (alias) => {
+        console.log(alias)
         var str = alias;
         str = str.toLowerCase();
         str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
@@ -125,5 +133,5 @@ export default AcceptRegisterModel;
 AcceptRegisterModel.propTypes = {
     show: PropType.bool.isRequired,
     onHide: PropType.func.isRequired,
-    registerData: PropType.object.isRequired,
+    registerData: PropType.string.isRequired,
 }
