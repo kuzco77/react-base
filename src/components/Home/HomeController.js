@@ -3,6 +3,8 @@ import { Jumbotron, Button } from "react-bootstrap"
 import firebase from "firebase"
 import ChangeTeacherIDView from '../ChangeTeacherIDView';
 import ChangeClassIDView from '../ChangeClassIDView';
+import moment from 'moment';
+import TimePicker from 'rc-time-picker';
 
 class HomeController extends Component {
     constructor() {
@@ -94,12 +96,15 @@ class HomeController extends Component {
                 {/* <NewHeader/> */}
                 <Jumbotron style={{ marginTop: "12.5%" }} bsClass="body">
                     <h1>{welcomeTitle}</h1>
+                    
                     <p>Trang web này dùng để quản lý người dạy và lớp học tại EDUMET</p>
                     <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
                     <ChangeTeacherIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
                     <ChangeClassIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
+                    
                 </Jumbotron>
+                <TimePicker defaultValue={moment()} showSecond={false} minuteStep={15}/>
             </div>
         )
     }

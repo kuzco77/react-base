@@ -105,7 +105,7 @@ class ChangeClassIDView extends Component {
             var index = 0
             snaps.forEach((snap) => {
                 const oldClass = snap.val()
-                oldClass.level = "1"
+                oldClass.level = 1
                 allClass[oldClass.idClass] = oldClass
 
                 if (index >= (snaps.numChildren() - 1)) {

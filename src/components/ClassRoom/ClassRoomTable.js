@@ -4,6 +4,9 @@ import BootstrapTable from "react-bootstrap-table-next"
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import { Button, Image, ToggleButtonGroup, ToggleButton } from "react-bootstrap"
 import PropType from "prop-types"
+import moment from 'moment';
+import TimePicker from 'rc-time-picker';
+// import 'rc-time-picker/assets/index.css'
 
 class ClassRoomTable extends Component {
     constructor(props) {
@@ -35,11 +38,12 @@ class ClassRoomTable extends Component {
                 width: "7%",
             }
         }, {
-            dataField: "time",
+            dataField: "timeTable",
             text: "Thời gian",
             headerStyle: {
-                width: "7%",
-            }
+                width: "10%",
+            },
+            formatter: this.timeFormatter,
         }, {
             dataField: "major",
             text: "Chuyên đề",
@@ -130,6 +134,75 @@ class ClassRoomTable extends Component {
 
     }
 
+    onCloseTimePicker = (type,index,idClass) => (value) => {
+        console.log(value.format("hh:mm"))
+        // console.log(value, type + index + idClass)
+        // this.setState({ [type + index + idClass]: value })
+
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).child("type").update(String.valueOf(value.format("hh:mm")))
+    }
+
+    timeFormatter = (cell, row, rowIndex, formatExtraData) => {
+        var timeJSX = []
+        var index = 1
+        var courses = Object.assign({}, cell)
+        // console.log("start" + index + row.idClass);
+        
+
+        while (courses["b" + index] !== undefined) {
+            const course = courses["b" + index]
+            var start = moment(course.start, "hh:mm") 
+            var end = moment(course.end, "hh:mm")
+            var room = course.room
+            var weekday = course.weekday
+            // console.log(start.format("hh:mm"))
+            timeJSX.push(<TimePicker
+                key={"start" + index + row.idClass}
+                defaultValue={start}
+                onChange={this.onCloseTimePicker("start",index,row.idClass)}
+                style={{ maxWidth: "55px" }}
+                showSecond={false}
+                minuteStep={15}
+                disabled={this.state.isLoading}
+            />)
+            timeJSX.push(<TimePicker
+                key={"end" + index + row.idClass}
+                defaultValue={end}
+                onChange={this.onCloseTimePicker("end",index,row.idClass)}
+                style={{ maxWidth: "55px" }}
+                showSecond={false}
+                minuteStep={15}
+                disabled={this.state.isLoading}
+            />)
+            timeJSX.push(<br key={"br"+index+row.idClass}/>)
+            index++
+        }
+        // var timeArray = cell.split("&")
+
+        // timeArray.forEach((time, index) => {
+        //     var hourAndWeekday = time.split("*")
+        //     var startAndEndHour = hourAndWeekday[0].split("-")
+        //     var startTime = moment(startAndEndHour[0], "hh:mm")
+        //     var endTime = moment(startAndEndHour[1], "hh:mm")
+        //     console.log("Start time: "+startTime.format("hh:mm")+", End time: "+endTime.format("hh:mm"))
+
+        //     timeJSX.push(<TimePicker 
+        //         key={"end"+index+row.idClass} 
+        //         value={this.state["end"+index+row.idClass]}
+        //         defaultValue={endTime} 
+        //         onChange={this.onCloseTimePicker("end"+index+row.idClass)} 
+        //         style={{maxWidth: "55px"}} 
+        //         defaultValue={endTime} 
+        //         showSecond={false} 
+        //         minuteStep={15}
+        //         />)
+        //     timeJSX.push(<br key={"br"+index+cell.idClass}/>)
+        // })
+        return <div>
+            {timeJSX}
+        </div>
+    }
+
     levelFormatter = (cell, row, rowIndex, formatExtraData) => {
         if (row) {
             const level = cell
@@ -149,7 +222,7 @@ class ClassRoomTable extends Component {
     onChangeToggleLevel = (row) => (event) => {
         console.log(event.target.value)
         this.setState({ isLoading: true })
-        const classRef = firebase.database().ref("ListClass").child(row.idClass).update({ level: event.target.value }, (err) => {
+        firebase.database().ref("ListClass").child(row.idClass).update({ level: parseInt(event.target.value, 10) }, (err) => {
             this.setState({ isLoading: false })
             if (err) {
                 console.log(err.message)

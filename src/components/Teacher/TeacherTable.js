@@ -5,6 +5,9 @@ import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import { Button, Image, Well } from "react-bootstrap"
 import FileUploader from "react-firebase-file-uploader";
 import PropType from "prop-types"
+import moment from 'moment';
+import TimePicker from 'rc-time-picker';
+import 'rc-time-picker/assets/index.css'
 
 class TeacherTable extends Component {
     constructor(props) {
@@ -143,8 +146,11 @@ class TeacherTable extends Component {
     }
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
+        var now = Date()
+        var monumen = moment("7:00", "hh:mm")
         return <div style={{ margin: "auto auto" }}>
             <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.props.onDeleteTeacher(row)}>Delete</Button>
+            <TimePicker style={{maxWidth: "55px"}} defaultValue={monumen} showSecond={false} minuteStep={15}/>
         </div>
     }
 

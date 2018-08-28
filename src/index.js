@@ -9,6 +9,7 @@ import ClassRoomController from "./components/ClassRoom/ClassRoomController"
 import TeacherController from './components/Teacher/TeacherController';
 import HomeController from "./components/Home/HomeController"
 import RegisterController from './components/Register/RegisterController';
+import 'rc-time-picker/assets/index.css'
 
 // Initialize Firebase (react-base)
 var config = {

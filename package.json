@@ -11,6 +11,7 @@
     "history": "^4.7.2",
     "npm": "^6.3.0",
     "prop-types": "^15.6.2",
+    "rc-time-picker": "^3.4.0",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-bootstrap-table-next": "^0.1.14",
