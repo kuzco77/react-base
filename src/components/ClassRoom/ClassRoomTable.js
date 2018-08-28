@@ -138,8 +138,17 @@ class ClassRoomTable extends Component {
         console.log(value.format("hh:mm"))
         // console.log(value, type + index + idClass)
         // this.setState({ [type + index + idClass]: value })
+        this.setState({isLoading: true})
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({type: value.format("hh:mm")}, (err) => {
+            if (err) {
+                console.log("Co loi xay ra khi cap nhat thoi khoa bieu");
+                this.setState({isLoading: false})
+            } else {
+                console.log("Cap nhat thoi khoa bieu thanh cong");
+                this.setState({isLoading: false})
+            }
 
-        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).child("type").update(String.valueOf(value.format("hh:mm")))
+        })
     }
 
     timeFormatter = (cell, row, rowIndex, formatExtraData) => {
