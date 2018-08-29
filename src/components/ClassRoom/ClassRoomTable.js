@@ -2,11 +2,33 @@ import React, { Component } from 'react';
 import * as firebase from "firebase"
 import BootstrapTable from "react-bootstrap-table-next"
 import cellEditFactory from 'react-bootstrap-table2-editor';
-import { Button, Image, ToggleButtonGroup, ToggleButton } from "react-bootstrap"
+import { Button, Image, ToggleButtonGroup, ToggleButton, DropdownButton, MenuItem } from "react-bootstrap"
 import PropType from "prop-types"
 import moment from 'moment';
 import TimePicker from 'rc-time-picker';
-// import 'rc-time-picker/assets/index.css'
+
+function renderDropdownButton(weekday, index, idClass) {
+    return (
+        <DropdownButton
+            title={weekday}
+            key={"dd" + index + idClass}
+            id={"dd" + index + idClass}
+            onSelect={onSelectDropDown}
+        >
+            <MenuItem eventKey="1" active={weekday === 1}>CN</MenuItem>
+            <MenuItem eventKey="2" active={weekday === 2}>T2</MenuItem>
+            <MenuItem eventKey="3" active={weekday === 3}>T3</MenuItem>
+            <MenuItem eventKey="4" active={weekday === 4}>T4</MenuItem>
+            <MenuItem eventKey="5" active={weekday === 5}>T5</MenuItem>
+            <MenuItem eventKey="6" active={weekday === 6}>T6</MenuItem>
+            <MenuItem eventKey="7" active={weekday === 7}>T7</MenuItem>
+        </DropdownButton>
+    );
+}
+
+function onSelectDropDown(eventKey, event) {
+    
+}
 
 class ClassRoomTable extends Component {
     constructor(props) {
@@ -104,7 +126,10 @@ class ClassRoomTable extends Component {
             }
             Object.assign(value.headerStyle, { textAlign: "center" })
 
-            value.editable = !(value.dataField === "Action" || value.dataField === "teacher.linkAvatar" || value.dataField === "level") && this.props.isSignedIn
+            value.editable = !(value.dataField === "Action" ||
+                value.dataField === "teacher.linkAvatar" ||
+                value.dataField === "level" ||
+                value.dataField === "timeTable") && this.props.isSignedIn
 
         })
 
@@ -129,46 +154,99 @@ class ClassRoomTable extends Component {
         } else {
             return <div>No data</div>
         }
-
-
-
     }
 
-    onCloseTimePicker = (type,index,idClass) => (value) => {
+    onCloseTimePicker = (type, index, idClass) => (value) => {
         console.log(value.format("hh:mm"))
-        // console.log(value, type + index + idClass)
+        console.log(value.format("hh:mm"), type + index + idClass)
         // this.setState({ [type + index + idClass]: value })
-        this.setState({isLoading: true})
-        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({type: value.format("hh:mm")}, (err) => {
+        this.setState({ isLoading: true })
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b" + index).update({ [type]: value.format("hh:mm") }, (err) => {
             if (err) {
                 console.log("Co loi xay ra khi cap nhat thoi khoa bieu");
-                this.setState({isLoading: false})
+                this.setState({ isLoading: false })
             } else {
                 console.log("Cap nhat thoi khoa bieu thanh cong");
-                this.setState({isLoading: false})
+                this.setState({ isLoading: false })
             }
 
         })
+    }
+
+    onAddDefaultTimeTable = (index, idClass) => () => {
+        this.setState({ isLoading: true })
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b" + index).update({
+            start: "7:00",
+            end: "9:00",
+            room: 101,
+            weekday: 2,
+        }, (err) => {
+            if (err) {
+                console.log("Co loi xay ra khi them thoi khoa bieu mac dinh");
+                console.log(err.message);
+                this.setState({ isLoading: false })
+            } else {
+                console.log("Them thoi khoa bieu mac dinh thanh cong");
+                this.setState({ isLoading: false })
+            }
+        })
+
+    }
+
+    getTheLastIndex = (index, cell) => {
+        var lastIndex = index
+        while (cell["b" + lastIndex] !== undefined) {
+            lastIndex++
+        }
+        return (lastIndex - 1)
+    }
+
+    onDeleteTimeTable = (index, idClass, cell) => (event) => {
+        this.setState({ isLoading: true })
+        var timeTableRef = firebase.database().ref("ListClass").child(idClass).child("timeTable")
+        var lastIndex = this.getTheLastIndex(index, cell)
+
+        console.log("the last index is: " + lastIndex);
+        if (lastIndex === index) {
+            timeTableRef.child("b" + lastIndex).remove((err) => {
+                if (err) {
+                    console.log("Co loi khi xoa TKB: " + err.message);
+                } else {
+                    console.log("Xoa TKB thanh cong");
+                }
+            })
+        } else {
+            timeTableRef.child("b" + lastIndex).once("value", (snap) => {
+                timeTableRef.update({ ["b" + index]: snap.val() })
+                snap.ref.remove((err) => {
+                    if (err) {
+                        console.log("Co loi khi xoa TKB: " + err.message);
+                    } else {
+                        console.log("Xoa TKB thanh cong");
+                    }
+                })
+            })
+        }
+        this.setState({ isLoading: false })
+
+
     }
 
     timeFormatter = (cell, row, rowIndex, formatExtraData) => {
         var timeJSX = []
         var index = 1
         var courses = Object.assign({}, cell)
-        // console.log("start" + index + row.idClass);
-        
-
         while (courses["b" + index] !== undefined) {
             const course = courses["b" + index]
-            var start = moment(course.start, "hh:mm") 
+            var start = moment(course.start, "hh:mm")
             var end = moment(course.end, "hh:mm")
             var room = course.room
             var weekday = course.weekday
             // console.log(start.format("hh:mm"))
             timeJSX.push(<TimePicker
                 key={"start" + index + row.idClass}
-                defaultValue={start}
-                onChange={this.onCloseTimePicker("start",index,row.idClass)}
+                value={start}
+                onChange={this.onCloseTimePicker("start", index, row.idClass)}
                 style={{ maxWidth: "55px" }}
                 showSecond={false}
                 minuteStep={15}
@@ -176,39 +254,22 @@ class ClassRoomTable extends Component {
             />)
             timeJSX.push(<TimePicker
                 key={"end" + index + row.idClass}
-                defaultValue={end}
-                onChange={this.onCloseTimePicker("end",index,row.idClass)}
+                value={end}
+                onChange={this.onCloseTimePicker("end", index, row.idClass)}
                 style={{ maxWidth: "55px" }}
                 showSecond={false}
                 minuteStep={15}
                 disabled={this.state.isLoading}
             />)
-            timeJSX.push(<br key={"br"+index+row.idClass}/>)
+            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell)} bsStyle="danger">X</Button>)
+            timeJSX.push(renderDropdownButton(weekday, index, row.idClass))
+            timeJSX.push(<br key={"br" + index + row.idClass} />)
             index++
         }
-        // var timeArray = cell.split("&")
 
-        // timeArray.forEach((time, index) => {
-        //     var hourAndWeekday = time.split("*")
-        //     var startAndEndHour = hourAndWeekday[0].split("-")
-        //     var startTime = moment(startAndEndHour[0], "hh:mm")
-        //     var endTime = moment(startAndEndHour[1], "hh:mm")
-        //     console.log("Start time: "+startTime.format("hh:mm")+", End time: "+endTime.format("hh:mm"))
-
-        //     timeJSX.push(<TimePicker 
-        //         key={"end"+index+row.idClass} 
-        //         value={this.state["end"+index+row.idClass]}
-        //         defaultValue={endTime} 
-        //         onChange={this.onCloseTimePicker("end"+index+row.idClass)} 
-        //         style={{maxWidth: "55px"}} 
-        //         defaultValue={endTime} 
-        //         showSecond={false} 
-        //         minuteStep={15}
-        //         />)
-        //     timeJSX.push(<br key={"br"+index+cell.idClass}/>)
-        // })
         return <div>
             {timeJSX}
+            <Button bsStyle="success" onClick={this.onAddDefaultTimeTable(index, row.idClass)}>+</Button>
         </div>
     }
 
