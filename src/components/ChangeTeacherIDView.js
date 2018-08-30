@@ -19,7 +19,6 @@ class ChangeTeacherIDView extends Component {
         console.log(this.cVNWCB("Nguyen Duc Anh"));
         this.convertNameToID("Nguyen Duc Anh", (result) => {
             console.log(result);
-            
         });
         
     }
@@ -120,8 +119,6 @@ class ChangeTeacherIDView extends Component {
     convertNameToID = (oldName, callback) => {
         // Convert nhu binh thuong
         var ketqua = this.cVNWCB(oldName)
-
-        console.log("Ket qua vua moi ra lo: " + ketqua)
         ketqua = ketqua.slice(0,-1)
 
 

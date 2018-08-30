@@ -115,7 +115,7 @@ class ClassRoomController extends Component {
           </p>
 
           <OverlayTrigger placement="right" overlay={tooltip}>
-            <Button style={{ width: "100px" }} bsStyle="success" onClick={this.handleAddClassBtn}>+</Button>
+            <Button style={{ width: "100px" }} bsStyle="success" onClick={this.handleAddClassBtn}>Thêm lớp</Button>
           </OverlayTrigger>
 
           <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />

@@ -7,29 +7,6 @@ import PropType from "prop-types"
 import moment from 'moment';
 import TimePicker from 'rc-time-picker';
 
-function renderDropdownButton(weekday, index, idClass) {
-    return (
-        <DropdownButton
-            title={weekday}
-            key={"dd" + index + idClass}
-            id={"dd" + index + idClass}
-            onSelect={onSelectDropDown}
-        >
-            <MenuItem eventKey="1" active={weekday === 1}>CN</MenuItem>
-            <MenuItem eventKey="2" active={weekday === 2}>T2</MenuItem>
-            <MenuItem eventKey="3" active={weekday === 3}>T3</MenuItem>
-            <MenuItem eventKey="4" active={weekday === 4}>T4</MenuItem>
-            <MenuItem eventKey="5" active={weekday === 5}>T5</MenuItem>
-            <MenuItem eventKey="6" active={weekday === 6}>T6</MenuItem>
-            <MenuItem eventKey="7" active={weekday === 7}>T7</MenuItem>
-        </DropdownButton>
-    );
-}
-
-function onSelectDropDown(eventKey, event) {
-    
-}
-
 class ClassRoomTable extends Component {
     constructor(props) {
         super(props)
@@ -76,7 +53,7 @@ class ClassRoomTable extends Component {
             dataField: "level",
             text: "Trình độ",
             headerStyle: {
-                width: "7%",
+                width: "90px",
             },
             formatter: this.levelFormatter,
         }, {
@@ -147,7 +124,7 @@ class ClassRoomTable extends Component {
             return <div>
                 <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
                 <p>{nameTeacher}</p>
-                <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsStyle="info" onClick={this.handleChangeBtn(row)}>
+                <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsSize="small" bsStyle="info" onClick={this.handleChangeBtn(row)}>
                     Thay doi
             </Button>
             </div>
@@ -175,12 +152,20 @@ class ClassRoomTable extends Component {
 
     onAddDefaultTimeTable = (index, idClass) => () => {
         this.setState({ isLoading: true })
-        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b" + index).update({
+        var addTimeTable = {}
+        addTimeTable["ListClass/"+idClass+"/timeTable/b"+index] = {
             start: "7:00",
             end: "9:00",
             room: 101,
             weekday: 2,
-        }, (err) => {
+        }
+        const timeTableID = firebase.database().ref("ListTimeTable/"+2+"/"+101)
+        addTimeTable["ListTimeTable/"+2+"/"+101+"/"+idClass+"b"+index] = {
+            start: "7:00",
+            end: "9:00",
+            idClass: idClass,
+        }
+        firebase.database().ref().update(addTimeTable, (err) => {
             if (err) {
                 console.log("Co loi xay ra khi them thoi khoa bieu mac dinh");
                 console.log(err.message);
@@ -232,6 +217,107 @@ class ClassRoomTable extends Component {
 
     }
 
+    renderDropdownWeekday = (weekday, index, idClass) => {
+        var weekdayPlus = ""
+        switch (weekday) {
+            case 1:
+                weekdayPlus = "CN"
+                break;
+            case 2:
+                weekdayPlus = "T2"
+                break;
+            case 3:
+                weekdayPlus = "T3"
+                break;
+            case 4:
+                weekdayPlus = "T4"
+                break;
+            case 5:
+                weekdayPlus = "T5"
+                break;
+            case 6:
+                weekdayPlus = "T6"
+                break;
+            case 7:
+                weekdayPlus = "T7"
+                break;
+    
+            default:
+                break;
+        }
+        return (
+            <DropdownButton
+                bsSize="xsmall"
+                title={weekdayPlus}
+                key={"dd" + index + idClass}
+                id={"dd" + index + idClass}
+                onSelect={this.onSelectDropDownWeekday(index, idClass)}
+                disabled={this.state.isLoading}
+            >
+                <MenuItem eventKey="1" active={weekday === 1}>CN</MenuItem>
+                <MenuItem eventKey="2" active={weekday === 2}>T2</MenuItem>
+                <MenuItem eventKey="3" active={weekday === 3}>T3</MenuItem>
+                <MenuItem eventKey="4" active={weekday === 4}>T4</MenuItem>
+                <MenuItem eventKey="5" active={weekday === 5}>T5</MenuItem>
+                <MenuItem eventKey="6" active={weekday === 6}>T6</MenuItem>
+                <MenuItem eventKey="7" active={weekday === 7}>T7</MenuItem>
+            </DropdownButton>
+        );
+    }
+
+    onSelectDropDownWeekday = (index, idClass) => (eventKey, event) => {
+        this.setState({isLoading: true})
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({weekday: parseInt(eventKey)}, (err) => {
+            if (err) {
+                console.log("Co loi khi cap nhat TKB: "+ err);
+            } else {
+                console.log("Thay doi TKB thanh cong");
+            }
+            this.setState({isLoading: false})
+        })
+    }
+
+    renderDropdownRoom = (room, index, idClass) => {
+        var roomPlus = ""
+        switch (room) {
+            case 101:
+                roomPlus = "Edumet"
+                break;
+            case 201:
+                roomPlus = "Eduspace"
+                break;
+            default:
+                break;
+        }
+        return (
+            <DropdownButton
+                bsSize="xsmall"
+                title={roomPlus}
+                key={"room" + index + idClass}
+                id={"room" + index + idClass}
+                onSelect={this.onSelectRoom(index, idClass)}
+                disabled={this.state.isLoading}
+            >
+                <MenuItem eventKey="101" active={room === 101}>Edumet</MenuItem>
+                <MenuItem eventKey="201" active={room === 201}>Eduspace</MenuItem>
+
+            </DropdownButton>
+        );
+    }
+
+    onSelectRoom = (index, idClass) => (eventKey, event) => {
+        this.setState({isLoading: true})
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({room: parseInt(eventKey)}, (err) => {
+            if (err) {
+                console.log("Co loi khi cap nhat TKB: "+ err);
+            } else {
+                console.log("Thay doi TKB thanh cong");
+            }
+            this.setState({isLoading: false})
+        })
+        
+    }
+
     timeFormatter = (cell, row, rowIndex, formatExtraData) => {
         var timeJSX = []
         var index = 1
@@ -261,15 +347,17 @@ class ClassRoomTable extends Component {
                 minuteStep={15}
                 disabled={this.state.isLoading}
             />)
-            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell)} bsStyle="danger">X</Button>)
-            timeJSX.push(renderDropdownButton(weekday, index, row.idClass))
-            timeJSX.push(<br key={"br" + index + row.idClass} />)
+            timeJSX.push(<br key={"br" + index + row.idClass}/>)
+            timeJSX.push(this.renderDropdownWeekday(weekday, index, row.idClass))
+            timeJSX.push(this.renderDropdownRoom(room, index, row.idClass))
+            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell)} bsStyle="danger">Xóa</Button>)
+            timeJSX.push(<p key={"seperate" + index + row.idClass}>----------------</p>)
             index++
         }
 
         return <div>
             {timeJSX}
-            <Button bsStyle="success" onClick={this.onAddDefaultTimeTable(index, row.idClass)}>+</Button>
+            <Button bsSize="small" bsStyle="success" onClick={this.onAddDefaultTimeTable(index, row.idClass)}>Thêm buổi</Button>
         </div>
     }
 
@@ -277,10 +365,9 @@ class ClassRoomTable extends Component {
         if (row) {
             const level = cell
             return <div>
-
                 <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
-                    <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
-                    <ToggleButton onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
+                    <ToggleButton style={{width: "80px"}} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
+                    <ToggleButton style={{width: "80px"}} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
                 </ToggleButtonGroup>
             </div>
         } else {
@@ -307,7 +394,7 @@ class ClassRoomTable extends Component {
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
         if (row) {
             return <div style={{ marginTop: "50px" }}>
-                <Button bsStyle="danger" onClick={this.handleShowDeleteModal(row)}>Delete</Button>
+                <Button bsStyle="danger" onClick={this.handleShowDeleteModal(row)}>Xóa</Button>
             </div>
         } else {
             return <div>No data</div>
@@ -324,12 +411,6 @@ class ClassRoomTable extends Component {
             return <div>No data</div>
         }
 
-    }
-
-    setAvatarLink = (row, url) => {
-        console.log(url, row)
-        const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"]).child("linkAvatar")
-        teacherIDRef.set(url)
     }
 
     onHideDeleteTeacherModal = (event) => {
