@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import '../App.css';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Modal, Button } from "react-bootstrap"
 import firebase from "firebase"
+import PropType from "prop-types"
+
 
 function FieldGroup({ id, label, help, ...props }) {
     return (
@@ -85,6 +87,7 @@ class AddClassRoomModal extends Component {
                 <Modal.Header closeButton>
                     <Modal.Title>Thêm Lớp Học</Modal.Title>
                 </Modal.Header>
+               
                 <Modal.Body>
                     <div >
                         <form style={{
@@ -101,7 +104,8 @@ class AddClassRoomModal extends Component {
                                 label="Mã Lớp Học"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
+                            
 
                             <FieldGroup
                                 value={this.state.grade}
@@ -110,7 +114,7 @@ class AddClassRoomModal extends Component {
                                 label="Lớp"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.major}
@@ -119,7 +123,7 @@ class AddClassRoomModal extends Component {
                                 label="Chuyên đề"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.level}
@@ -129,7 +133,7 @@ class AddClassRoomModal extends Component {
                                 placeholder="Khá"
                                 onChange={this.handleTextField}
                                 disabled = {true}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.introClass1}
@@ -138,7 +142,7 @@ class AddClassRoomModal extends Component {
                                 label="Giới thiệu 1"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.introClass2}
@@ -147,7 +151,7 @@ class AddClassRoomModal extends Component {
                                 label="Giới thiệu 2"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.phoneNumber}
@@ -156,7 +160,7 @@ class AddClassRoomModal extends Component {
                                 label="Số điện thoại"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.subject}
@@ -165,7 +169,7 @@ class AddClassRoomModal extends Component {
                                 label="Môn học"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <FieldGroup
                                 value={this.state.time}
@@ -174,7 +178,7 @@ class AddClassRoomModal extends Component {
                                 label="Thời gian học"
                                 placeholder="Nhập vào đây"
                                 onChange={this.handleTextField}
-                            />
+                            /><hr/>
 
                             <p>(Người dạy sẽ thêm vào sau)</p>
                         </form>
@@ -192,3 +196,8 @@ class AddClassRoomModal extends Component {
 }
 
 export default AddClassRoomModal
+
+AddClassRoomModal.propTypes = {
+    show: PropType.bool.isRequired,
+    onHide: PropType.func.isRequired,
+}

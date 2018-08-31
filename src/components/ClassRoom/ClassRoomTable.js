@@ -113,10 +113,6 @@ class ClassRoomTable extends Component {
         this.state.columns = columns
     }
 
-    handleChangeBtn = (row) => (event) => {
-        this.props.onChooseTeacher(row.idClass)
-    }
-
     avatarFormater = (cell, row, rowIndex, formatExtraData) => {
         if (row) {
             const teacher = row.teacher
@@ -124,7 +120,7 @@ class ClassRoomTable extends Component {
             return <div>
                 <Image id="target" src={cell} height={100} width={100} circle={true} /><br />
                 <p>{nameTeacher}</p>
-                <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsSize="small" bsStyle="info" onClick={this.handleChangeBtn(row)}>
+                <Button style={{ marginTop: "0px", marginBottom: "5px" }} bsSize="small" bsStyle="info" onClick={this.props.openChooseTeacher(row.idClass)}>
                     Thay doi
             </Button>
             </div>
@@ -151,30 +147,30 @@ class ClassRoomTable extends Component {
     }
 
     onAddDefaultTimeTable = (index, idClass) => () => {
-        this.setState({ isLoading: true })
-        var addTimeTable = {}
-        addTimeTable["ListClass/"+idClass+"/timeTable/b"+index] = {
-            start: "7:00",
-            end: "9:00",
-            room: 101,
-            weekday: 2,
-        }
-        const timeTableID = firebase.database().ref("ListTimeTable/"+2+"/"+101)
-        addTimeTable["ListTimeTable/"+2+"/"+101+"/"+idClass+"b"+index] = {
-            start: "7:00",
-            end: "9:00",
-            idClass: idClass,
-        }
-        firebase.database().ref().update(addTimeTable, (err) => {
-            if (err) {
-                console.log("Co loi xay ra khi them thoi khoa bieu mac dinh");
-                console.log(err.message);
-                this.setState({ isLoading: false })
-            } else {
-                console.log("Them thoi khoa bieu mac dinh thanh cong");
-                this.setState({ isLoading: false })
-            }
-        })
+        this.props.openAddTimeTable(idClass)
+        // this.setState({ isLoading: true })
+        // var addTimeTable = {}
+        // addTimeTable["ListClass/"+idClass+"/timeTable/b"+index] = {
+        //     start: "7:00",
+        //     end: "9:00",
+        //     room: 101,
+        //     weekday: 2,
+        // }
+        // addTimeTable["ListTimeTable/"+2+"/"+101+"/"+idClass+"b"+index] = {
+        //     start: "7:00",
+        //     end: "9:00",
+        //     idClass: idClass,
+        // }
+        // firebase.database().ref().update(addTimeTable, (err) => {
+        //     if (err) {
+        //         console.log("Co loi xay ra khi them thoi khoa bieu mac dinh");
+        //         console.log(err.message);
+        //         this.setState({ isLoading: false })
+        //     } else {
+        //         console.log("Them thoi khoa bieu mac dinh thanh cong");
+        //         this.setState({ isLoading: false })
+        //     }
+        // })
 
     }
 
@@ -351,13 +347,13 @@ class ClassRoomTable extends Component {
             timeJSX.push(this.renderDropdownWeekday(weekday, index, row.idClass))
             timeJSX.push(this.renderDropdownRoom(room, index, row.idClass))
             timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell)} bsStyle="danger">Xóa</Button>)
-            timeJSX.push(<p key={"seperate" + index + row.idClass}>----------------</p>)
+            timeJSX.push(<hr key={"hr" + index + row.idClass} style={{height:"1px", border:"0 none", color: "#A9A9A9", backgroundColor: "#A9A9A9"}} />)
             index++
         }
 
         return <div>
             {timeJSX}
-            <Button bsSize="small" bsStyle="success" onClick={this.onAddDefaultTimeTable(index, row.idClass)}>Thêm buổi</Button>
+            <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass)}>Thêm buổi</Button>
         </div>
     }
 
@@ -451,7 +447,8 @@ export default ClassRoomTable;
 
 ClassRoomTable.propTypes = {
     onDeleteClass: PropType.func.isRequired,
-    onChooseTeacher: PropType.func.isRequired,
+    openChooseTeacher: PropType.func.isRequired,
+    openAddTimeTable: PropType.func.isRequired,
     isSignedIn: PropType.bool.isRequired,
     products: PropType.array.isRequired,
 }

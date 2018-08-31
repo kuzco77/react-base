@@ -8,6 +8,7 @@ import 'cropperjs/dist/cropper.css';
 import AddTeacherModal from '../Teacher/AddTeacherModal';
 import ClassRoomTable from './ClassRoomTable';
 import AddClassRoomModal from './AddClassRoomModal';
+import AddTimeTableModal from './AddTimeTableModal';
 import NewHeader from "../Header/NewHeader"
 import DeleteClassRoomModal from './DeleteClassRoomModal';
 import SelectTeacherForClassRoomModal from './SelectTeacherForClassRoomModal';
@@ -28,6 +29,8 @@ class ClassRoomController extends Component {
       idClassDeleteClassModal: "",
       showChooseTeacherModal: false,
       idClassForChooseTeacherModal: "",
+      showAddTimeTableModal: false,
+      idClassForAddTimeTable: "",
       products: [],
     }
   }
@@ -90,7 +93,7 @@ class ClassRoomController extends Component {
     })
   }
 
-  onChooseTeacher = (idClass) => {
+  openChooseTeacher = (idClass) => (event) => {
     this.setState({
       idClassForChooseTeacherModal: idClass,
       showChooseTeacherModal: true,
@@ -103,6 +106,21 @@ class ClassRoomController extends Component {
       idClassForChooseTeacherModal: "",
     })
   }
+
+  openAddTimeTable = (idClass) => () => {
+    this.setState({
+      idClassForAddTimeTable: idClass,
+      showAddTimeTableModal: true,
+    })
+  }
+
+  onHideAddTimeTable = () => {
+    this.setState({
+      showAddTimeTableModal: false,
+      idClassForAddTimeTable: "idClass",
+    })
+  }
+
 
   render() {
     return (
@@ -119,10 +137,12 @@ class ClassRoomController extends Component {
           </OverlayTrigger>
 
           <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />
+          <AddTimeTableModal show={this.state.showAddTimeTableModal} onHide={this.onHideAddTimeTable} idClass={this.state.idClassForAddTimeTable}/>
 
           <ClassRoomTable
             onDeleteClass={this.onDeleteClass}
-            onChooseTeacher={this.onChooseTeacher}
+            openChooseTeacher={this.openChooseTeacher}
+            openAddTimeTable={this.openAddTimeTable}
             isSignedIn={(firebase.auth().currentUser !== null)}
             products={this.state.products}
           />

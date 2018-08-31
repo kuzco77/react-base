@@ -63,6 +63,7 @@ class HomeController extends Component {
         this.checkVeryVeryHardQuestion()
     }
 
+
     checkVeryVeryHardQuestion = () => {
         var timeArray = [true, true, true, false, false , true, true ,true ,true , false ,false, true, false]
         var resultArray = []
