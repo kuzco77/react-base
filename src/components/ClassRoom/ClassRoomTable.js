@@ -182,35 +182,33 @@ class ClassRoomTable extends Component {
         return (lastIndex - 1)
     }
 
-    onDeleteTimeTable = (index, idClass, cell) => (event) => {
+    onDeleteTimeTable = (index, idClass, cell, weekday, room) => (event) => {
         this.setState({ isLoading: true })
         var timeTableRef = firebase.database().ref("ListClass").child(idClass).child("timeTable")
+        var listTimeTableRef = firebase.database().ref("ListTimeTable").child(weekday).child(room).child(idClass+"b"+(room-1))
         var lastIndex = this.getTheLastIndex(index, cell)
 
         console.log("the last index is: " + lastIndex);
         if (lastIndex === index) {
-            timeTableRef.child("b" + lastIndex).remove((err) => {
-                if (err) {
-                    console.log("Co loi khi xoa TKB: " + err.message);
-                } else {
-                    console.log("Xoa TKB thanh cong");
-                }
-            })
+            timeTableRef.child("b" + lastIndex).remove(this.checkError)
+            listTimeTableRef.remove()
         } else {
             timeTableRef.child("b" + lastIndex).once("value", (snap) => {
                 timeTableRef.update({ ["b" + index]: snap.val() })
-                snap.ref.remove((err) => {
-                    if (err) {
-                        console.log("Co loi khi xoa TKB: " + err.message);
-                    } else {
-                        console.log("Xoa TKB thanh cong");
-                    }
-                })
+                snap.ref.remove(this.checkError)
             })
+            listTimeTableRef.remove(this.checkError)
         }
         this.setState({ isLoading: false })
 
+    }
 
+    checkError = (err) => {
+        if (err) {
+            console.log("Co loi khi xoa TKB: " + err.message);
+        } else {
+            console.log("Xoa TKB thanh cong");
+        }
     }
 
     renderDropdownWeekday = (weekday, index, idClass) => {
@@ -346,14 +344,14 @@ class ClassRoomTable extends Component {
             timeJSX.push(<br key={"br" + index + row.idClass}/>)
             timeJSX.push(this.renderDropdownWeekday(weekday, index, row.idClass))
             timeJSX.push(this.renderDropdownRoom(room, index, row.idClass))
-            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell)} bsStyle="danger">Xóa</Button>)
+            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell, weekday, room)} bsStyle="danger">Xóa</Button>)
             timeJSX.push(<hr key={"hr" + index + row.idClass} style={{height:"1px", border:"0 none", color: "#A9A9A9", backgroundColor: "#A9A9A9"}} />)
             index++
         }
 
         return <div>
             {timeJSX}
-            <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass)}>Thêm buổi</Button>
+            <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass, index)}>Thêm buổi</Button>
         </div>
     }
 

@@ -4,31 +4,6 @@ import firebase from "firebase"
 import ChangeTeacherIDView from '../ChangeTeacherIDView';
 import ChangeClassIDView from '../ChangeClassIDView';
 
-Object.defineProperty( String.prototype, 'intHour', {
-    get: function () {
-        var timeArray = this.split(":")
-        if (timeArray.length === 2) {
-            var intHour = parseInt(timeArray[0])*100
-            intHour += parseInt(timeArray[1])/3*5
-            return intHour
-        } else {
-            return ""
-        }
-        
-    }
-});
-
-Object.defineProperty( Number.prototype, 'stringHour', {
-    get: function () {
-
-        var hour = Math.floor(this/100) 
-        var minute = this - 100*hour
-        return hour.toString() + ":" + (minute/5*3).toString()
-        
-    }
-});
-
-
 class HomeController extends Component {
     constructor() {
         super()

@@ -32,6 +32,7 @@ class ClassRoomController extends Component {
       showAddTimeTableModal: false,
       idClassForAddTimeTable: "",
       products: [],
+      indexOfAddTimeTable: 1,
     }
   }
 
@@ -107,10 +108,11 @@ class ClassRoomController extends Component {
     })
   }
 
-  openAddTimeTable = (idClass) => () => {
+  openAddTimeTable = (idClass, index) => () => {
     this.setState({
       idClassForAddTimeTable: idClass,
       showAddTimeTableModal: true,
+      indexOfAddTimeTable: index
     })
   }
 
@@ -137,7 +139,11 @@ class ClassRoomController extends Component {
           </OverlayTrigger>
 
           <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />
-          <AddTimeTableModal show={this.state.showAddTimeTableModal} onHide={this.onHideAddTimeTable} idClass={this.state.idClassForAddTimeTable}/>
+          <AddTimeTableModal 
+          show={this.state.showAddTimeTableModal} 
+          onHide={this.onHideAddTimeTable} 
+          idClass={this.state.idClassForAddTimeTable}
+          index={this.state.indexOfAddTimeTable}/>
 
           <ClassRoomTable
             onDeleteClass={this.onDeleteClass}
