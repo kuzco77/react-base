@@ -37,22 +37,8 @@ class AddTimeTableModal extends Component {
         this.state = {
             currentHour: 2,
             currentMinute: 0,
-            currentWeekday: 2,
-            products: {
-                101: [
-                    { start: "7:30", end: "9:30" },
-                    { start: "7:45", end: "9:45" },
-                    { start: "8:00", end: "10:00" },
-                    { start: "8:15", end: "10:15" },
-                ],
-                201: [
-                    { start: "17:30", end: "19:30" },
-                    { start: "17:45", end: "19:45" },
-                    { start: "18:00", end: "20:00" },
-                    { start: "18:15", end: "20:15" },
-                ]
-            },
-            listRooms: {},
+            currentWeekday: 0,
+            listAvailableTimeTables: {},
             currentSelectTimeTable: "",
         }
     }
@@ -96,7 +82,7 @@ class AddTimeTableModal extends Component {
                 currentHour: 2,
                 currentMinute: 0,
                 currentWeekday: 2,
-                products: {},
+                listAvailableTimeTables: {},
                 currentSelectTimeTable: "",
             })
         } else {
@@ -107,19 +93,12 @@ class AddTimeTableModal extends Component {
         this.props.onHide()
     }
 
-    componentWillMount = () => {
-
-    }
-
-    componentDidMount = () => {
+    updateProducts = () => {
         var newProducts = {}
-        var listRooms = {101: "Edumet", 201: "Eduspace"}
-        firebase.database().ref("ListRooms").once("value", (snaps) => {
-            // snaps.forEach((snap) => {
-            //     listRooms[snap.key] = snap.val()
-            // })
+        // this.setState({listRooms: {101: "Edumet", 201: "Eduspace"}})
+        // var listRooms = {101: "Edumet", 201: "Eduspace"}
 
-            Object.keys(listRooms).forEach((key, indexKey, array) => {
+            Object.keys(this.props.listRooms).forEach((key, indexKey, array) => {
                 firebase.database().ref("ListTimeTable").child(this.state.currentWeekday).child(key).once("value", (snapsBuoi) => {
                     
                     var busyTimeArray = this.createTimeArray()
@@ -143,7 +122,7 @@ class AddTimeTableModal extends Component {
                     if (indexKey === (array.length - 1)) {
                         console.log("New product = product");
                         this.setState({
-                            products: newProducts,
+                            listAvailableTimeTables: newProducts,
                         })
                     }
                     
@@ -152,9 +131,11 @@ class AddTimeTableModal extends Component {
                 })
                 
             })
+       
+    }
 
-
-        })
+    componentDidMount = () => {
+        this.updateProducts()
 
     }
 
@@ -244,26 +225,26 @@ class AddTimeTableModal extends Component {
         return true
     }
 
-    componentWillUnmount() {
-        this.isCancelled = true;
-    }
 
     onSelectHour = (eventKey, event) => {
         this.setState({
             currentHour: eventKey
         })
+        this.updateProducts()
     }
 
     onSelectMinute = (eventKey, event) => {
         this.setState({
             currentMinute: eventKey
         })
+        this.updateProducts()
     }
 
     onChangeWeekday = (value) => {
         this.setState({
             currentWeekday: value
         })
+        this.updateProducts()
     }
 
     onClickTimeTable = (event) => {
@@ -274,13 +255,20 @@ class AddTimeTableModal extends Component {
     }
 
 
-    renderTimeTables = (products) => {
-        const listOfKey = Object.keys(products)
+    renderTimeTables = (listAvailableTimeTables, listRooms) => {
         var timeTableJSX = []
-        listOfKey.forEach((roomName) => {
-            timeTableJSX.push(<p key={"p" + roomName}>{roomName}</p>)
-            products[roomName].forEach((availableTime) => {
-                timeTableJSX.push(<Button onClick={this.onClickTimeTable} value={roomName + "&" + availableTime.start + "&" + availableTime.end} key={roomName + availableTime.start}>{availableTime.start + "->" + availableTime.end}</Button>)
+        Object.keys(listAvailableTimeTables).forEach((roomName) => {
+            timeTableJSX.push(<h1 key={"p" + roomName}>{listRooms[roomName]}</h1>)
+            listAvailableTimeTables[roomName].forEach((availableTime) => {
+                timeTableJSX.push(<Button 
+                    bsStyle="primary" 
+                    bsSize="small" 
+                    style={{width: "110px"}}
+                    onClick={this.onClickTimeTable} 
+                    value={roomName + "&" + availableTime.start + "&" + availableTime.end} 
+                    key={roomName + availableTime.start}><b>{availableTime.start + "->" + availableTime.end}</b>
+                    
+                    </Button>)
             })
             timeTableJSX.push(<hr key={roomName} />)
         })
@@ -310,20 +298,22 @@ class AddTimeTableModal extends Component {
                     </ButtonToolbar>
                     <br />
                     <p>Thời lượng</p>
-                    <DropdownButton bsSize="sm" title={this.state.currentHour + " giờ"} onSelect={this.onSelectHour} id="dropdown-size-medium">
+                    <DropdownButton  bsSize="sm" title={this.state.currentHour + " giờ"} onSelect={this.onSelectHour} id="dropdown-size-medium">
                         <MenuItem eventKey={0}>0 giờ</MenuItem>
                         <MenuItem eventKey={1}>1 giờ</MenuItem>
                         <MenuItem eventKey={2}>2 giờ</MenuItem>
                         <MenuItem eventKey={3}>3 giờ</MenuItem>
                     </DropdownButton>
-                    <DropdownButton bsSize="sm" title={this.state.currentMinute + " phút"} onSelect={this.onSelectMinute} id="dropdown-size-medium">
+                    <DropdownButton  bsSize="sm" title={this.state.currentMinute + " phút"} onSelect={this.onSelectMinute} id="dropdown-size-medium">
                         <MenuItem eventKey={0}>0 phút</MenuItem>
                         <MenuItem eventKey={15}>15 phút</MenuItem>
                         <MenuItem eventKey={30}>30 phút</MenuItem>
                         <MenuItem eventKey={45}>45 phút</MenuItem>
                     </DropdownButton>
+
+                    {this.renderTimeTables(this.state.listAvailableTimeTables, this.props.listRooms)}
                 </Modal.Body>
-                {this.renderTimeTables(this.state.products)}
+                
 
                 <Modal.Footer>
                     <Button onClick={this.props.onHide}>Close</Button>
@@ -341,4 +331,5 @@ AddTimeTableModal.propTypes = {
     onHide: PropType.func.isRequired,
     idClass: PropType.string.isRequired,
     index: PropType.number.isRequired,
+    listRooms: PropType.object.isRequired,
 }

@@ -17,7 +17,7 @@ class ClassRoomTable extends Component {
             isLoading: false,
         }
 
-        this.state.products = [];
+        this.state.listClasses = [];
         const columns = [{
             dataField: "idClass",
             text: "Mã Lớp Học",
@@ -146,34 +146,6 @@ class ClassRoomTable extends Component {
         })
     }
 
-    onAddDefaultTimeTable = (index, idClass) => () => {
-        this.props.openAddTimeTable(idClass)
-        // this.setState({ isLoading: true })
-        // var addTimeTable = {}
-        // addTimeTable["ListClass/"+idClass+"/timeTable/b"+index] = {
-        //     start: "7:00",
-        //     end: "9:00",
-        //     room: 101,
-        //     weekday: 2,
-        // }
-        // addTimeTable["ListTimeTable/"+2+"/"+101+"/"+idClass+"b"+index] = {
-        //     start: "7:00",
-        //     end: "9:00",
-        //     idClass: idClass,
-        // }
-        // firebase.database().ref().update(addTimeTable, (err) => {
-        //     if (err) {
-        //         console.log("Co loi xay ra khi them thoi khoa bieu mac dinh");
-        //         console.log(err.message);
-        //         this.setState({ isLoading: false })
-        //     } else {
-        //         console.log("Them thoi khoa bieu mac dinh thanh cong");
-        //         this.setState({ isLoading: false })
-        //     }
-        // })
-
-    }
-
     getTheLastIndex = (index, cell) => {
         var lastIndex = index
         while (cell["b" + lastIndex] !== undefined) {
@@ -285,6 +257,7 @@ class ClassRoomTable extends Component {
         }
         return (
             <DropdownButton
+                disabled={true}
                 bsSize="xsmall"
                 title={roomPlus}
                 key={"room" + index + idClass}
@@ -324,6 +297,7 @@ class ClassRoomTable extends Component {
             var weekday = course.weekday
             // console.log(start.format("hh:mm"))
             timeJSX.push(<TimePicker
+                disabled={true}
                 key={"start" + index + row.idClass}
                 value={start}
                 onChange={this.onCloseTimePicker("start", index, row.idClass)}
@@ -333,6 +307,7 @@ class ClassRoomTable extends Component {
                 disabled={this.state.isLoading}
             />)
             timeJSX.push(<TimePicker
+                disabled={true}
                 key={"end" + index + row.idClass}
                 value={end}
                 onChange={this.onCloseTimePicker("end", index, row.idClass)}
@@ -427,7 +402,7 @@ class ClassRoomTable extends Component {
         return (
             <BootstrapTable
                 keyField="idClass"
-                data={this.props.products}
+                data={this.props.listClasses}
                 columns={this.state.columns}
                 striped
                 hover
@@ -448,5 +423,5 @@ ClassRoomTable.propTypes = {
     openChooseTeacher: PropType.func.isRequired,
     openAddTimeTable: PropType.func.isRequired,
     isSignedIn: PropType.bool.isRequired,
-    products: PropType.array.isRequired,
+    listClasses: PropType.array.isRequired,
 }

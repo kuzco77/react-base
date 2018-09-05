@@ -5,11 +5,9 @@ import "react-bootstrap-table-next"
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap"
 import 'cropperjs/dist/cropper.css';
-import AddTeacherModal from '../Teacher/AddTeacherModal';
 import ClassRoomTable from './ClassRoomTable';
 import AddClassRoomModal from './AddClassRoomModal';
 import AddTimeTableModal from './AddTimeTableModal';
-import NewHeader from "../Header/NewHeader"
 import DeleteClassRoomModal from './DeleteClassRoomModal';
 import SelectTeacherForClassRoomModal from './SelectTeacherForClassRoomModal';
 
@@ -20,18 +18,24 @@ class ClassRoomController extends Component {
   constructor() {
     super()
     this.state = {
-      src: "http://braavos.me/images/posts/college-rock/the-smiths.png",
       selectedAvatarRow: null,
       isUploading: false,
       progress: 0,
       showAddClassModal: false,
+
       showDeleteClassModal: false,
       idClassDeleteClassModal: "",
+
       showChooseTeacherModal: false,
       idClassForChooseTeacherModal: "",
       showAddTimeTableModal: false,
+
       idClassForAddTimeTable: "",
-      products: [],
+
+      listClasses: [],
+      listRooms: {},
+      listTimeTable: {},
+
       indexOfAddTimeTable: 1,
     }
   }
@@ -54,13 +58,24 @@ class ClassRoomController extends Component {
       snaps.forEach(snap => {
         newProducts.push(snap.val())
       })
-      this.setState({ products: newProducts })
+      this.setState({ listClasses: newProducts })
     }, (err) => {
       if (err) {
         console.log("Co loi xay ra khi lay du lieu lop hoc: "+err.message);
-        
       }
     })
+
+    firebase.database().ref("ListRooms").on("value", (snaps) => {
+      this.setState({listRooms: snaps.val()})
+    })
+
+    firebase.database().ref("ListRooms").on("child_added", (snaps) => {
+      snaps.forEach((snap) => {
+        
+      })
+    })
+
+    // firebase.database().ref("ListTimeTable").on
   }
 
   handleIDTF = (event) => {
@@ -138,19 +153,23 @@ class ClassRoomController extends Component {
             <Button style={{ width: "100px" }} bsStyle="success" onClick={this.handleAddClassBtn}>Thêm lớp</Button>
           </OverlayTrigger>
 
-          <AddClassRoomModal show={this.state.showAddClassModal} onHide={this.handleClose} />
+          <AddClassRoomModal 
+          show={this.state.showAddClassModal} 
+          onHide={this.handleClose} />
+
           <AddTimeTableModal 
           show={this.state.showAddTimeTableModal} 
           onHide={this.onHideAddTimeTable} 
           idClass={this.state.idClassForAddTimeTable}
-          index={this.state.indexOfAddTimeTable}/>
+          index={this.state.indexOfAddTimeTable}
+          listRooms={this.state.listRooms}/>
 
           <ClassRoomTable
             onDeleteClass={this.onDeleteClass}
             openChooseTeacher={this.openChooseTeacher}
             openAddTimeTable={this.openAddTimeTable}
             isSignedIn={(firebase.auth().currentUser !== null)}
-            products={this.state.products}
+            listClasses={this.state.listClasses}
           />
           <DeleteClassRoomModal
             show={this.state.showDeleteClassModal}

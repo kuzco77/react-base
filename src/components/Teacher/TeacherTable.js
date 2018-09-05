@@ -18,7 +18,7 @@ class TeacherTable extends Component {
             idTeacherOfDeleteModal: ""
         }
 
-        this.state.products = [];
+        this.state.listTeachers = [];
         const columns = [{
             dataField: "idTeacher",
             text: "Mã Giáo Viên",
@@ -217,7 +217,7 @@ class TeacherTable extends Component {
         return (
             <BootstrapTable
                 keyField="idTeacher"
-                data={this.props.products}
+                data={this.props.listTeachers}
                 columns={this.state.columns}
                 striped
                 hover
@@ -236,5 +236,5 @@ export default TeacherTable;
 TeacherTable.propTypes = {
     isSignedIn: PropType.bool.isRequired,
     onDeleteTeacher: PropType.func.isRequired,
-    products: PropType.array.isRequired,
+    listTeachers: PropType.array.isRequired,
 }

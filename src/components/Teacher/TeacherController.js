@@ -23,7 +23,7 @@ class TeacherController extends Component {
       showAddTeacherModal: false,
       showDeleteTeacherModal: false,
       idTeacherDeleteModal: "",
-      products: [],
+      listTeachers: [],
     }
   }
 
@@ -45,7 +45,7 @@ class TeacherController extends Component {
       snaps.forEach(snap => {
         newProducts.push(snap.val())
       })
-      this.setState({ products: newProducts })
+      this.setState({ listTeachers: newProducts })
       
     }, (err) => {
       if (err) {
@@ -54,7 +54,7 @@ class TeacherController extends Component {
           currentTeacherIDRef.on("value", (snap) => {
             const newProducts = []
             newProducts.push(snap.val())
-            this.setState({ products: newProducts})
+            this.setState({ listTeachers: newProducts})
           })
         }
         
@@ -116,7 +116,7 @@ class TeacherController extends Component {
           <TeacherTable
             isSignedIn={(firebase.auth().currentUser !== null)}
             onDeleteTeacher={this.onDeleteTeacher}
-            products= {this.state.products}
+            listTeachers= {this.state.listTeachers}
           />
           <DeleteTeacherModal
             show={this.state.showDeleteTeacherModal}
