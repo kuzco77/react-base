@@ -93,26 +93,30 @@ class TeacherTable extends Component {
     }
 
     gmailFormatter = (cell, row, rowIndex, formatExtraData) => {
-        var gmailArray = cell.split("@", 2)
 
-        if (gmailArray.length === 2) {
-            if (gmailArray[1] === "gmail.com") {
-                return <div>
-                <p>{gmailArray[0]}</p>
-            </div>
-            } else {
-                return <div>
-                <p>Gmail khong dung dinh dang</p>
-            </div>
+        if (cell !== undefined) {
+            var gmailArray = cell.split("@", 2)
+
+            if (gmailArray.length === 2) {
+                if (gmailArray[1] === "gmail.com") {
+                    return <div>
+                        <p>{gmailArray[0]}</p>
+                    </div>
+                } else {
+                    return <div>
+                        <p>Gmail khong dung dinh dang</p>
+                    </div>
+                }
             }
+
+            return <div>
+                Email khong dung dinh dang
+        </div>
+
         }
 
-        return <div>
-            Email khong dung dinh dang
-        </div>
-        
-        
-        
+
+
     }
 
     linkAvatarFormatter = (cell, row, rowIndex, formatExtraData) => {
@@ -145,8 +149,8 @@ class TeacherTable extends Component {
 
     actionFormater = (cell, row, rowIndex, formatExtraData) => {
         return <div style={{ margin: "auto auto" }}>
-            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.props.onDeleteTeacher(row)}>Delete</Button>
-            
+            <Button style={{ marginTop: "50%" }} bsStyle="danger" onClick={this.props.onDeleteTeacher(row.idTeacher)}>Delete</Button>
+
         </div>
     }
 

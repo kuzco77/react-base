@@ -20,7 +20,8 @@ class AddTeacherModal extends Component {
             idTeacher: "",
             name: "",
             school: "",
-            achievement: ""
+            achievement: "",
+            gmail: "abc@gmail.com"
         }
     }
 
