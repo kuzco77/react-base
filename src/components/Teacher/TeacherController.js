@@ -38,7 +38,7 @@ class TeacherController extends Component {
     document.title = "Giảng viên"
 
     var teacherIDRef = firebase.database().ref().child("ListTeacher")
-    var currentTeacherIDRef = firebase.database().ref().child("ListTeacher").child("anhnd1")
+    
 
     teacherIDRef.on("value", (snaps) => {
       const newProducts = []
@@ -51,10 +51,16 @@ class TeacherController extends Component {
       if (err) {
         console.log("Co loi xay ra khi lay du lieu giao vien: "+err.message);
         if (firebase.auth().currentUser) {
-          currentTeacherIDRef.on("value", (snap) => {
+          var currentTeacherIDRef = firebase.database().ref().child("ListTeacher").orderByChild("gmail").equalTo(firebase.auth().currentUser.email)
+          currentTeacherIDRef.on("value",  (snapTeachers) => {
             const newProducts = []
-            newProducts.push(snap.val())
-            this.setState({ listTeachers: newProducts})
+
+             snapTeachers.forEach((snapTeacher) => {
+              newProducts.push(snapTeacher.val())
+              this.setState({ listTeachers: newProducts})
+            })
+
+            
           })
         }
         

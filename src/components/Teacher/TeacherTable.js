@@ -194,21 +194,37 @@ class TeacherTable extends Component {
         })
     }
 
-    afterSaveCell(oldValue, newValue, row, column) {
+    testFunction() {
+        return new Promise((resolve, reject) => {
+          resolve(["test1", "test2"]);
+        });
+      }
+
+    async afterSaveCell(oldValue, newValue, row, column) {
+        console.log(column.dataField, firebase.auth().currentUser.emailVerified);
+        var dataField = column.dataField
+
+        const [test1, test2] = await this.testFunction()
+        console.log("sdfasdf")
+        console.log("test ne: " + test1 + test2);
+        
+        
         if (oldValue !== newValue) {
-            const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"])
-            teacherIDRef.update(row)
+            const teacherIDRef = firebase.database().ref().child("ListTeacher").child(row["idTeacher"]).child(dataField)
+            teacherIDRef.set(newValue)
+
             const teacherInListClassRef = firebase.database().ref().child("ListClass").orderByChild("teacher/idTeacher").equalTo(row.idTeacher)
             teacherInListClassRef.once("value", (snaps) => {
+                var updatedTeacherInClasses = {}
                 snaps.forEach((snap) => {
-                    // teacherRefsThatNeedToChange.push(snap.ref.child("teacher"))
-                    snap.ref.child("teacher").update(row, (error) => {
-                        if (error) {
-                            console.log("Co loi khi cap nhat thong tin giao vien")
-                        } else {
-                            console.log("Cap nhat thong tin giao vien thanh cong")
-                        }
-                    })
+                    updatedTeacherInClasses[snap.key+"/teacher/"+dataField] = newValue
+                })
+                snaps.ref.update(updatedTeacherInClasses, (error) => {
+                    if (error) {
+                        console.log("Co loi khi cap nhat thong tin giao vien: ", error.message)
+                    } else {
+                        console.log("Cap nhat thong tin giao vien thanh cong")
+                    }
                 })
 
             })

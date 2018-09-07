@@ -130,8 +130,30 @@ class HomeController extends Component {
             })
     }
 
-    signInWithPopUp = (event) => {
+    signInGoogleWithPopUp = (event) => {
         var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            // ...
+          }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log("Error Code: " + errorCode, "Error Message: " + errorMessage)
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+          });
+    }
+
+    signInGoogleWithPopUp = (event) => {
+        var provider = new firebase.auth.FacebookAuthProvider();
+        provider.addScope("user_birthday")
         firebase.auth().signInWithPopup(provider).then(function(result) {
             // This gives you a Google Access Token. You can use it to access the Google API.
             var token = result.credential.accessToken;
@@ -164,7 +186,8 @@ class HomeController extends Component {
                     <h1>{welcomeTitle}</h1>
                     
                     <p>Trang web này dùng để quản lý người dạy và lớp học tại EDUMET</p>
-                    <p><Button bsStyle="success" onClick={this.signInWithPopUp}>Sign In</Button></p>
+                    <p><Button bsStyle="success" onClick={this.signInGoogleWithPopUp}>Sign In With Google</Button></p>
+                    <p><Button bsStyle="success" onClick={this.signInGoogleWithPopUp}>Sign In With Facebook</Button></p>
                     <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
                     <ChangeTeacherIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
                     <ChangeClassIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"}/>
