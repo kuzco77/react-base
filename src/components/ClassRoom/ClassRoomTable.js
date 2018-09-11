@@ -157,7 +157,7 @@ class ClassRoomTable extends Component {
     onDeleteTimeTable = (index, idClass, cell, weekday, room) => (event) => {
         this.setState({ isLoading: true })
         var timeTableRef = firebase.database().ref("ListClass").child(idClass).child("timeTable")
-        var listTimeTableRef = firebase.database().ref("ListTimeTable").child(weekday).child(room).child(idClass+"b"+(room-1))
+        var listTimeTableRef = firebase.database().ref("ListTimeTable").child(weekday).child(room).child(idClass + "b" + (room - 1))
         var lastIndex = this.getTheLastIndex(index, cell)
 
         console.log("the last index is: " + lastIndex);
@@ -207,7 +207,7 @@ class ClassRoomTable extends Component {
             case 7:
                 weekdayPlus = "T7"
                 break;
-    
+
             default:
                 break;
         }
@@ -232,14 +232,14 @@ class ClassRoomTable extends Component {
     }
 
     onSelectDropDownWeekday = (index, idClass) => (eventKey, event) => {
-        this.setState({isLoading: true})
-        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({weekday: parseInt(eventKey)}, (err) => {
+        this.setState({ isLoading: true })
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b" + index).update({ weekday: parseInt(eventKey) }, (err) => {
             if (err) {
-                console.log("Co loi khi cap nhat TKB: "+ err);
+                console.log("Co loi khi cap nhat TKB: " + err);
             } else {
                 console.log("Thay doi TKB thanh cong");
             }
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
         })
     }
 
@@ -273,61 +273,66 @@ class ClassRoomTable extends Component {
     }
 
     onSelectRoom = (index, idClass) => (eventKey, event) => {
-        this.setState({isLoading: true})
-        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b"+index).update({room: parseInt(eventKey)}, (err) => {
+        this.setState({ isLoading: true })
+        firebase.database().ref("ListClass").child(idClass).child("timeTable").child("b" + index).update({ room: parseInt(eventKey) }, (err) => {
             if (err) {
-                console.log("Co loi khi cap nhat TKB: "+ err);
+                console.log("Co loi khi cap nhat TKB: " + err);
             } else {
                 console.log("Thay doi TKB thanh cong");
             }
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
         })
-        
+
     }
 
     timeFormatter = (cell, row, rowIndex, formatExtraData) => {
-        var timeJSX = []
-        var index = 1
-        var courses = Object.assign({}, cell)
-        while (courses["b" + index] !== undefined) {
-            const course = courses["b" + index]
-            var start = moment(course.start, "hh:mm")
-            var end = moment(course.end, "hh:mm")
-            var room = course.room
-            var weekday = course.weekday
-            // console.log(start.format("hh:mm"))
-            timeJSX.push(<TimePicker
-                disabled={true}
-                key={"start" + index + row.idClass}
-                value={start}
-                onChange={this.onCloseTimePicker("start", index, row.idClass)}
-                style={{ maxWidth: "55px" }}
-                showSecond={false}
-                minuteStep={15}
-                disabled={this.state.isLoading}
-            />)
-            timeJSX.push(<TimePicker
-                disabled={true}
-                key={"end" + index + row.idClass}
-                value={end}
-                onChange={this.onCloseTimePicker("end", index, row.idClass)}
-                style={{ maxWidth: "55px" }}
-                showSecond={false}
-                minuteStep={15}
-                disabled={this.state.isLoading}
-            />)
-            timeJSX.push(<br key={"br" + index + row.idClass}/>)
-            timeJSX.push(this.renderDropdownWeekday(weekday, index, row.idClass))
-            timeJSX.push(this.renderDropdownRoom(room, index, row.idClass))
-            timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell, weekday, room)} bsStyle="danger">Xóa</Button>)
-            timeJSX.push(<hr key={"hr" + index + row.idClass} style={{height:"1px", border:"0 none", color: "#A9A9A9", backgroundColor: "#A9A9A9"}} />)
-            index++
+        if (cell !== undefined) {
+            var timeJSX = []
+            var index = 1
+            var courses = Object.assign({}, cell)
+            while (courses["b" + index] !== undefined) {
+                const course = courses["b" + index]
+                var start = moment(course.start, "hh:mm")
+                var end = moment(course.end, "hh:mm")
+                var room = course.room
+                var weekday = course.weekday
+                // console.log(start.format("hh:mm"))
+                timeJSX.push(<TimePicker
+                    disabled={true}
+                    key={"start" + index + row.idClass}
+                    value={start}
+                    onChange={this.onCloseTimePicker("start", index, row.idClass)}
+                    style={{ maxWidth: "55px" }}
+                    showSecond={false}
+                    minuteStep={15}
+                    disabled={this.state.isLoading}
+                />)
+                timeJSX.push(<TimePicker
+                    disabled={true}
+                    key={"end" + index + row.idClass}
+                    value={end}
+                    onChange={this.onCloseTimePicker("end", index, row.idClass)}
+                    style={{ maxWidth: "55px" }}
+                    showSecond={false}
+                    minuteStep={15}
+                    disabled={this.state.isLoading}
+                />)
+                timeJSX.push(<br key={"br" + index + row.idClass} />)
+                timeJSX.push(this.renderDropdownWeekday(weekday, index, row.idClass))
+                timeJSX.push(this.renderDropdownRoom(room, index, row.idClass))
+                timeJSX.push(<Button bsSize="xs" key={"btn" + index + row.idClass} disabled={this.state.isLoading} onClick={this.onDeleteTimeTable(index, row.idClass, cell, weekday, room)} bsStyle="danger">Xóa</Button>)
+                timeJSX.push(<hr key={"hr" + index + row.idClass} style={{ height: "1px", border: "0 none", color: "#A9A9A9", backgroundColor: "#A9A9A9" }} />)
+                index++
+            }
+
+            return <div>
+                {timeJSX}
+                <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass, index)}>Thêm buổi</Button>
+            </div>
         }
 
-        return <div>
-            {timeJSX}
-            <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass, index)}>Thêm buổi</Button>
-        </div>
+        return <div></div>
+
     }
 
     levelFormatter = (cell, row, rowIndex, formatExtraData) => {
@@ -335,8 +340,8 @@ class ClassRoomTable extends Component {
             const level = cell
             return <div>
                 <ToggleButtonGroup type="radio" name="options" defaultValue={Number(cell)}>
-                    <ToggleButton style={{width: "80px"}} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
-                    <ToggleButton style={{width: "80px"}} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
+                    <ToggleButton style={{ width: "80px" }} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={1}>Khá</ToggleButton>
+                    <ToggleButton style={{ width: "80px" }} bsSize="small" onChange={this.onChangeToggleLevel(row)} disabled={this.state.isLoading} value={2}>Trung Bình</ToggleButton>
                 </ToggleButtonGroup>
             </div>
         } else {
