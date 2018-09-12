@@ -61,7 +61,7 @@ class AddTimeTableModal extends Component {
             const index = this.props.index
             const listClassRef = firebase.database().ref("ListClass")
             var updatedTimeTable = {}
-            updatedTimeTable["ListTimeTable/" + weekday + "/" + roomName + "/" + idClass + "b" + index] = {
+            updatedTimeTable["ListTimeTables/" + weekday + "/" + roomName + "/" + idClass + "b" + index] = {
                 start: start,
                 end: end,
                 idClass: idClass,
@@ -99,7 +99,7 @@ class AddTimeTableModal extends Component {
         // var listRooms = {101: "Edumet", 201: "Eduspace"}
 
             Object.keys(this.props.listRooms).forEach((key, indexKey, array) => {
-                firebase.database().ref("ListTimeTable").child(this.state.currentWeekday).child(key).once("value", (snapsBuoi) => {
+                firebase.database().ref("ListTimeTables").child(this.state.currentWeekday).child(key).once("value", (snapsBuoi) => {
                     
                     var busyTimeArray = this.createTimeArray()
                     var index = 1

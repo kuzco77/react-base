@@ -34,7 +34,7 @@ class ClassRoomController extends Component {
 
       listClasses: [],
       listRooms: {},
-      listTimeTable: {},
+      listTimeTables: {},
 
       indexOfAddTimeTable: 1,
     }
@@ -68,18 +68,6 @@ class ClassRoomController extends Component {
     firebase.database().ref("ListRooms").on("value", (snaps) => {
       this.setState({listRooms: snaps.val()})
     })
-
-    firebase.database().ref("ListRooms").on("child_added", (snaps) => {
-      snaps.forEach((snap) => {
-        
-      })
-    })
-
-    // firebase.database().ref("ListTimeTable").on
-  }
-
-  handleIDTF = (event) => {
-    this.setState({ searchTeacherID: "" })
   }
 
   handleAddClassBtn = (event) => {
@@ -88,10 +76,6 @@ class ClassRoomController extends Component {
 
   handleClose = (event) => {
     this.setState({ showAddClassModal: false })
-  }
-
-  handleSearchTeacher = (event) => {
-    this.state.searchTeacherID = event.target.value
   }
 
   onDeleteClass = (idClass) => {

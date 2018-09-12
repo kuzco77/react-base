@@ -34,11 +34,11 @@ class HomeController extends Component {
                 // ...
                 console.log(user.providerData.providerID);
                 if (user.providerData.providerID === "facebook.com") {
-                    this.setState({signedWithFB: true})
+                    this.setState({ signedWithFB: true })
                 } else {
-                    this.setState({signedWithFB: true})
+                    this.setState({ signedWithFB: true })
                 }
-                
+
             } else {
                 console.log("User is signed out")
                 this.setState({ user: {} })
@@ -54,11 +54,11 @@ class HomeController extends Component {
                     // or whether we leave that to developer to handle.
                     return true;
                 },
-                //   uiShown: function() {
-                //     // The widget is rendered.
-                //     // Hide the loader.
-                //     document.getElementById('loader').style.display = 'none';
-                //   }
+                  uiShown: function() {
+                    // The widget is rendered.
+                    // Hide the loader.
+                    document.getElementById('loader').style.display = 'none';
+                  }
             },
             // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
             signInFlow: 'popup',
@@ -209,7 +209,7 @@ class HomeController extends Component {
             var token = result.credential.accessToken;
             // The signed-in user info.
             var user = result.user;
-            this.setState({signedWithFB: true})
+            this.setState({ signedWithFB: true })
             // ...
         }).catch(function (error) {
             // Handle Errors here.
@@ -228,6 +228,21 @@ class HomeController extends Component {
         const teacherRef = firebase.database().ref("ListTeacher")
     }
 
+    changeTable2Tables = () => {
+        firebase.database().ref("ListTimeTable").once("value", (snaps) => {
+            snaps.ref.parent.child("ListTimeTables").set(snaps.val(), (err) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Success");
+                    
+                }
+            })
+        }, (err) => {
+            console.log(err)
+        })
+    }
+
     render() {
         var displayName = this.state.user.displayName
         var welcomeTitle = displayName ? ("Xin chao, " + displayName) : "Xin vui long dang nhap truoc khi su dung"
@@ -242,12 +257,16 @@ class HomeController extends Component {
                         <p><Button bsStyle="success" onClick={this.signInGoogleWithPopUp}>Sign In With Google</Button></p>
                         <p><Button bsStyle="success" onClick={this.signInFacebookWithPopUp}>Sign In With Facebook</Button></p>
                         <p><Button bsStyle="primary" onClick={this.signOutHandle}>Sign Out</Button></p>
+                        <p><Button bsStyle="primary" onClick={this.changeTable2Tables}>Table => Tables</Button></p>
                         <ChangeTeacherIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"} />
                         <ChangeClassIDView isSignedIn={this.state.user !== null} isGod={this.state.user.email === "namanhchu2103@gmail.com"} />
+                        <p><div id="firebaseui-auth-container"></div></p>
+                        <p><div id="loader">Loading...</div></p>
+
                         <p>{timeCreate}</p>
                     </Jumbotron>
                 </div>
-                
+
             </div>
 
         )

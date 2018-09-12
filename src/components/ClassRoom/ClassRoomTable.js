@@ -157,19 +157,19 @@ class ClassRoomTable extends Component {
     onDeleteTimeTable = (index, idClass, cell, weekday, room) => (event) => {
         this.setState({ isLoading: true })
         var timeTableRef = firebase.database().ref("ListClass").child(idClass).child("timeTable")
-        var listTimeTableRef = firebase.database().ref("ListTimeTable").child(weekday).child(room).child(idClass + "b" + (room - 1))
+        var listTimeTablesRef = firebase.database().ref("ListTimeTables").child(weekday).child(room).child(idClass + "b" + (room - 1))
         var lastIndex = this.getTheLastIndex(index, cell)
 
         console.log("the last index is: " + lastIndex);
         if (lastIndex === index) {
             timeTableRef.child("b" + lastIndex).remove(this.checkError)
-            listTimeTableRef.remove()
+            listTimeTablesRef.remove()
         } else {
             timeTableRef.child("b" + lastIndex).once("value", (snap) => {
                 timeTableRef.update({ ["b" + index]: snap.val() })
                 snap.ref.remove(this.checkError)
             })
-            listTimeTableRef.remove(this.checkError)
+            listTimeTablesRef.remove(this.checkError)
         }
         this.setState({ isLoading: false })
 
@@ -286,7 +286,6 @@ class ClassRoomTable extends Component {
     }
 
     timeFormatter = (cell, row, rowIndex, formatExtraData) => {
-        if (cell !== undefined) {
             var timeJSX = []
             var index = 1
             var courses = Object.assign({}, cell)
@@ -329,7 +328,7 @@ class ClassRoomTable extends Component {
                 {timeJSX}
                 <Button bsSize="small" bsStyle="success" onClick={this.props.openAddTimeTable(row.idClass, index)}>Thêm buổi</Button>
             </div>
-        }
+         
 
         return <div></div>
 
